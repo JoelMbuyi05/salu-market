@@ -1,0 +1,56 @@
+{
+  "app_name": "Salu",
+  "nav": {
+    "home": "Accueil",
+    "post": "Publier",
+    "profile": "Mon profil"
+  },
+  "auth": {
+    "login": "Se connecter",
+    "register": "S'inscrire",
+    "email": "Email",
+    "password": "Mot de passe",
+    "phone": "Numéro de téléphone",
+    "logout": "Se déconnecter"
+  },
+  "listing": {
+    "price": "Prix",
+    "location": "Quartier",
+    "contact_seller": "Contacter le vendeur",
+    "post_listing": "Publier une annonce",
+    "title": "Titre",
+    "description": "Description",
+    "category": "Catégorie",
+    "photos": "Photos",
+    "mark_sold": "Marquer comme vendu",
+    "sold": "Vendu",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "report": "Signaler"
+  },
+  "categories": {
+    "all": "Tout",
+    "phones": "Téléphones",
+    "clothes": "Habits",
+    "electronics": "Électronique",
+    "food": "Alimentation",
+    "furniture": "Meubles",
+    "vehicles": "Véhicules",
+    "services": "Services",
+    "other": "Autres"
+  },
+  "search": {
+    "placeholder": "Rechercher une annonce..."
+  },
+  "profile": {
+    "my_listings": "Mes annonces",
+    "favorites": "Favoris"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "confirm": "Confirmer"
+  }
+}
