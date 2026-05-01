@@ -1,0 +1,56 @@
+{
+  "app_name": "Salu",
+  "nav": {
+    "home": "Home",
+    "post": "Post",
+    "profile": "My Profile"
+  },
+  "auth": {
+    "login": "Log In",
+    "register": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "phone": "Phone Number",
+    "logout": "Log Out"
+  },
+  "listing": {
+    "price": "Price",
+    "location": "Location",
+    "contact_seller": "Contact Seller",
+    "post_listing": "Post a Listing",
+    "title": "Title",
+    "description": "Description",
+    "category": "Category",
+    "photos": "Photos",
+    "mark_sold": "Mark as Sold",
+    "sold": "Sold",
+    "edit": "Edit",
+    "delete": "Delete",
+    "report": "Report"
+  },
+  "categories": {
+    "all": "All",
+    "phones": "Phones",
+    "clothes": "Clothes",
+    "electronics": "Electronics",
+    "food": "Food",
+    "furniture": "Furniture",
+    "vehicles": "Vehicles",
+    "services": "Services",
+    "other": "Other"
+  },
+  "search": {
+    "placeholder": "Search for a listing..."
+  },
+  "profile": {
+    "my_listings": "My Listings",
+    "favorites": "Favorites"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  }
+}
