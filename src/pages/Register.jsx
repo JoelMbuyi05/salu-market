@@ -15,22 +15,38 @@ export default function Register() {
     const [loading, setLoading] = useState(false)
 
     async function handleRegister() {
-        setLoading(true)
-        setError('')
-        const { error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-                data: { full_name: fullName, phone }
-            }
-        })
-        if (error) {
-            setError(error.message)
-        } else {
-            navigate('/')
-        }
+    setLoading(true)
+    setError('')
+    
+    const { data, error } = await supabase.auth.signUp({
+        email,
+        password
+    })
+
+    if (error) {
+        setError(error.message)
         setLoading(false)
+        return
     }
+
+    // manually insert into users table
+    const { error: profileError } = await supabase
+        .from('users')
+        .insert({
+            id: data.user.id,
+            full_name: fullName,
+            phone: phone
+        })
+
+    if (profileError) {
+        setError(profileError.message)
+        setLoading(false)
+        return
+    }
+
+    navigate('/')
+    setLoading(false)
+}
 
     return (
         <div className="min-h-screen bg-white flex flex-col">
