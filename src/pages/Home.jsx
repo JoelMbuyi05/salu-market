@@ -1,58 +1,96 @@
+import { useState, useEffect, useRef } from 'react'
+import { supabase } from '../lib/supabase'
 import ListingCard from '../components/ListingCard'
 
-const fakeListings = [
-    {
-        id: '1',
-        title: 'iPhone 13 Pro Max 256GB comme neuf',
-        price: 850000,
-        quartier: 'Nganza',
-        category_slug: 'phones',
-        created_at: new Date(Date.now() - 7200000).toISOString(),
-        listing_images: [{ url: 'https://placehold.co/400x300?text=iPhone', position: 0 }]
-    },
-    {
-        id: '2',
-        title: 'Canapé 3 places tissu gris',
-        price: 320000,
-        quartier: 'Muya',
-        category_slug: 'furniture',
-        created_at: new Date(Date.now() - 3600000).toISOString(),
-        listing_images: [{ url: 'https://placehold.co/400x300?text=Canape', position: 0 }]
-    },
-    {
-        id: '3',
-        title: 'Samsung Galaxy A54 neuf sous emballage',
-        price: 480000,
-        quartier: 'Bipemba',
-        category_slug: 'phones',
-        created_at: new Date(Date.now() - 1800000).toISOString(),
-        listing_images: [{ url: 'https://placehold.co/400x300?text=Samsung', position: 0 }]
-    },
-    {
-        id: '4',
-        title: 'Habits enfant 2-5 ans lot de 10 pièces',
-        price: 45000,
-        quartier: 'Dibindi',
-        category_slug: 'clothes',
-        created_at: new Date(Date.now() - 900000).toISOString(),
-        listing_images: [{ url: 'https://placehold.co/400x300?text=Habits', position: 0 }]
+const PAGE_SIZE = 20
+
+async function fetchListings(pageNumber, setListings, setHasMore, setLoading) {
+    setLoading(true)
+    const from = pageNumber * PAGE_SIZE
+    const to = from + PAGE_SIZE - 1
+
+    const { data, error } = await supabase
+        .from('listings')
+        .select(`
+            id, title, price, quartier, category_slug, created_at,
+            listing_images (url, position)
+        `)
+        .eq('is_sold', false)
+        .eq('is_flagged', false)
+        .order('created_at', { ascending: false })
+        .range(from, to)
+
+    if (error) {
+        console.error(error)
+        setLoading(false)
+        return
     }
-]
+
+    if (data.length < PAGE_SIZE) setHasMore(false)
+    setListings(prev => pageNumber === 0 ? data : [...prev, ...data])
+    setLoading(false)
+}
 
 export default function Home() {
+    const [listings, setListings] = useState([])
+    const [page, setPage] = useState(0)
+    const [loading, setLoading] = useState(false)
+    const [hasMore, setHasMore] = useState(true)
+    const bottomRef = useRef(null)
+
+    useEffect(() => {
+        fetchListings(0, setListings, setHasMore, setLoading)
+    }, [])
+
+    useEffect(() => {
+        if (!hasMore || loading) return
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting) setPage(prev => prev + 1)
+            },
+            { threshold: 0.1 }
+        )
+        if (bottomRef.current) observer.observe(bottomRef.current)
+        return () => observer.disconnect()
+    }, [hasMore, loading])
+
+    useEffect(() => {
+        if (page === 0) return
+        fetchListings(page, setListings, setHasMore, setLoading)
+    }, [page])
+
     return (
         <div className="min-h-screen bg-light-bg">
-            {/* Header */}
             <div className="bg-primary px-4 py-3 sticky top-0 z-10">
                 <h1 className="text-white font-bold text-xl">Salu</h1>
             </div>
 
-            {/* Grid */}
             <div className="p-3 grid grid-cols-2 gap-3">
-                {fakeListings.map(listing => (
+                {listings.map(listing => (
                     <ListingCard key={listing.id} listing={listing} />
                 ))}
             </div>
+
+            {loading && (
+                <div className="flex justify-center py-6">
+                    <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                </div>
+            )}
+
+            {hasMore && <div ref={bottomRef} className="h-10" />}
+
+            {!hasMore && listings.length > 0 && (
+                <p className="text-center text-muted text-sm py-6">
+                    Plus d'annonces à afficher
+                </p>
+            )}
+
+            {!loading && listings.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-20 gap-2">
+                    <p className="text-near-black font-semibold">Aucune annonce pour le moment</p>
+                    <p className="text-muted text-sm">Soyez le premier à publier !</p>
+                </div>
+            )}
         </div>
     )
 }
