@@ -1,15 +1,16 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import ListingCard from '../components/ListingCard'
+import CategoryChips from '../components/CategoryChips'
 
 const PAGE_SIZE = 20
 
-async function fetchListings(pageNumber, setListings, setHasMore, setLoading) {
+async function fetchListings(pageNumber, setListings, setHasMore, setLoading, category) {
     setLoading(true)
     const from = pageNumber * PAGE_SIZE
     const to = from + PAGE_SIZE - 1
 
-    const { data, error } = await supabase
+    let query = supabase
         .from('listings')
         .select(`
             id, title, price, quartier, category_slug, created_at,
@@ -19,6 +20,13 @@ async function fetchListings(pageNumber, setListings, setHasMore, setLoading) {
         .eq('is_flagged', false)
         .order('created_at', { ascending: false })
         .range(from, to)
+
+    // only filter if not "all"
+    if (category !== 'all') {
+        query = query.eq('category_slug', category)
+    }
+
+    const { data, error } = await query
 
     if (error) {
         console.error(error)
@@ -32,14 +40,25 @@ async function fetchListings(pageNumber, setListings, setHasMore, setLoading) {
 }
 
 export default function Home() {
+
+    const [category, setCategory] = useState('all')
+
     const [listings, setListings] = useState([])
     const [page, setPage] = useState(0)
     const [loading, setLoading] = useState(false)
     const [hasMore, setHasMore] = useState(true)
     const bottomRef = useRef(null)
 
+    function handleCategorySelect(slug) {
+      setCategory(slug)
+      setPage(0)
+      setHasMore(true)
+      setListings([])
+      fetchListings(0, setListings, setHasMore, setLoading, slug)
+    }
+
     useEffect(() => {
-        fetchListings(0, setListings, setHasMore, setLoading)
+        fetchListings(0, setListings, setHasMore, setLoading, category)
     }, [])
 
     useEffect(() => {
@@ -56,13 +75,18 @@ export default function Home() {
 
     useEffect(() => {
         if (page === 0) return
-        fetchListings(page, setListings, setHasMore, setLoading)
+        fetchListings(page, setListings, setHasMore, setLoading, category)
     }, [page])
 
     return (
         <div className="min-h-screen bg-light-bg">
             <div className="bg-primary px-4 py-3 sticky top-0 z-10">
                 <h1 className="text-white font-bold text-xl">Salu</h1>
+            </div>
+
+            {/* sticky chips below header */}
+            <div className="sticky top-12 z-10 shadow-sm">
+                <CategoryChips selected={category} onSelect={handleCategorySelect} />
             </div>
 
             <div className="p-3 grid grid-cols-2 gap-3">
