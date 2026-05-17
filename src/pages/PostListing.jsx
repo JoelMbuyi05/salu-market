@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { use, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../store/authContext'
+import imageCompression from 'browser-image-compression'
 
 const categories = [
     { slug: 'phones', labelKey: 'categories.phones' },
@@ -31,10 +32,23 @@ export default function PostListing() {
     const [error, setError] = useState('')
 
     // when user picks images, create local preview URLs
-    function handleImagePick(e) {
+    async function handleImagePick(e) {
         const files = Array.from(e.target.files).slice(0, 5) // max 5 images
-        setImages(files)
-        const urls = files.map(f => URL.createObjectURL(f))
+
+        const options = {
+            maxSizeMB: 0.5,
+            maxWidthOrHeight: 1024,
+            useWebWorker: true
+        }
+
+        //compress each images before storing
+        const compressed = await Promise.all(
+            files.map(file => imageCompression(file, options))
+        )
+
+        setImages(compressed)
+
+        const urls = compressed.map(f => URL.createObjectURL(f))
         setPreviews(urls)
     }
 
