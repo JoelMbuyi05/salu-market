@@ -5,6 +5,7 @@ import ListingCard from '../components/ListingCard'
 import CategoryChips from '../components/CategoryChips'
 import { useDebounce } from '../hooks/useDebounce'
 import { useTranslation } from 'react-i18next'
+import SkeletonCard from '../components/SkeletonCard'
 
 const PAGE_SIZE = 20
 
@@ -145,7 +146,15 @@ export default function Home() {
                 ))}
             </div>
 
-            {loading && (
+            {loading && listings.length === 0 && (
+                <div className="p-3 grid grid-cols-2 gap-3">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                        <SkeletonCard key={i} />
+                    ))}
+                </div>
+            )}
+
+            {loading && listings.length > 0 && (
                 <div className="flex justify-center py-6">
                     <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                 </div>
