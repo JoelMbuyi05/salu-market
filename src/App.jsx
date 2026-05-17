@@ -5,6 +5,7 @@ import Register from './pages/Register'
 import Home from './pages/Home'
 import ListingDetail from './pages/ListingDetail'
 import PostListing from './pages/PostListing'
+import Profile from './pages/Profile'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
@@ -31,6 +32,11 @@ export default function App() {
         <Route path="/post" element={
           <ProtectedRoute>
             <PostListing />
+          </ProtectedRoute>
+        } />
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <Profile />
           </ProtectedRoute>
         } />
       </Routes>

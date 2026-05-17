@@ -107,12 +107,20 @@ export default function Home() {
                 {/* top row — title + post button */}
                 <div className="flex items-center justify-between mb-2">
                     <h1 className="text-white font-bold text-xl">Salu</h1>
-                    <button
-                        onClick={() => navigate('/post')}
-                        className="bg-white text-primary text-sm font-semibold px-3 py-1 rounded-full"
-                    >
-                        + {t('listing.post_listing')}
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => navigate('/profile')}
+                            className="text-white text-sm opacity-80"
+                        >
+                            {t('nav.profile')}
+                        </button>
+                        <button
+                            onClick={() => navigate('/post')}
+                            className="bg-white text-primary text-sm font-semibold px-3 py-1 rounded-full"
+                        >
+                            + {t('listing.post_listing')}
+                        </button>
+                    </div>
                 </div>
 
                 {/* search input */}
