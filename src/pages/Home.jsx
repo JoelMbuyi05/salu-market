@@ -2,10 +2,12 @@ import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import ListingCard from '../components/ListingCard'
 import CategoryChips from '../components/CategoryChips'
+import { useDebounce } from '../hooks/useDebounce'
+import { useTranslation } from 'react-i18next'
 
 const PAGE_SIZE = 20
 
-async function fetchListings(pageNumber, setListings, setHasMore, setLoading, category) {
+async function fetchListings(pageNumber, setListings, setHasMore, setLoading, category, search) {
     setLoading(true)
     const from = pageNumber * PAGE_SIZE
     const to = from + PAGE_SIZE - 1
@@ -21,9 +23,14 @@ async function fetchListings(pageNumber, setListings, setHasMore, setLoading, ca
         .order('created_at', { ascending: false })
         .range(from, to)
 
-    // only filter if not "all"
     if (category !== 'all') {
         query = query.eq('category_slug', category)
+    }
+
+    // search by title or quartier
+    if (search.trim()) {
+        const term = search.trim().toLowerCase()
+        query = query.or(`title.ilike.%${search}%,quartier.ilike.%${term}%`)
     }
 
     const { data, error } = await query
@@ -41,25 +48,48 @@ async function fetchListings(pageNumber, setListings, setHasMore, setLoading, ca
 
 export default function Home() {
 
+    const { t } = useTranslation()
+
     const [category, setCategory] = useState('all')
 
     const [listings, setListings] = useState([])
     const [page, setPage] = useState(0)
+
     const [loading, setLoading] = useState(false)
     const [hasMore, setHasMore] = useState(true)
+
+    const [search, setSearch] = useState('')
+
+    const debouncedSearch = useDebounce(search, 500)
+
     const bottomRef = useRef(null)
+
+    useEffect (() => {
+        fetchListings(0, setListings, setHasMore, setLoading, category, debouncedSearch)
+    }, []);
+
+    useEffect(() => {
+        if (page === 0) return
+        fetchListings(page, setListings, setHasMore, setLoading, category, debouncedSearch)
+    }, [page])
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setPage(0)
+            setHasMore(true)
+            setListings([])
+            fetchListings(0, setListings, setHasMore, setLoading, category, debouncedSearch)
+        }, 0)
+        return () => clearTimeout(timer)
+    }, [debouncedSearch])
 
     function handleCategorySelect(slug) {
       setCategory(slug)
       setPage(0)
       setHasMore(true)
       setListings([])
-      fetchListings(0, setListings, setHasMore, setLoading, slug)
+      fetchListings(0, setListings, setHasMore, setLoading, slug, debouncedSearch)
     }
-
-    useEffect(() => {
-        fetchListings(0, setListings, setHasMore, setLoading, category)
-    }, [])
 
     useEffect(() => {
         if (!hasMore || loading) return
@@ -73,19 +103,32 @@ export default function Home() {
         return () => observer.disconnect()
     }, [hasMore, loading])
 
-    useEffect(() => {
-        if (page === 0) return
-        fetchListings(page, setListings, setHasMore, setLoading, category)
-    }, [page])
-
     return (
         <div className="min-h-screen bg-light-bg">
             <div className="bg-primary px-4 py-3 sticky top-0 z-10">
                 <h1 className="text-white font-bold text-xl">Salu</h1>
+                {/* search input */}
+                <div className="relative mt-3">
+                    <input
+                        type="text"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        placeholder={t('search.placeholder')}
+                        className="w-full bg-white rounded-lg px-4 py-2 text-sm text-near-black outline-none pr-8"
+                    />
+                    {search && (
+                        <button
+                            onClick={() => setSearch('')}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted text-lg leading-none"
+                        >
+                            ×
+                        </button>
+                    )}
+                </div>
             </div>
 
             {/* sticky chips below header */}
-            <div className="sticky top-12 z-10 shadow-sm">
+            <div className="sticky top-24 z-10 shadow-sm">
                 <CategoryChips selected={category} onSelect={handleCategorySelect} />
             </div>
 
