@@ -4,6 +4,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Home from './pages/Home'
 import ListingDetail from './pages/ListingDetail'
+import PostListing from './pages/PostListing'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
@@ -25,6 +26,11 @@ export default function App() {
         <Route path="/listing/:id" element={
           <ProtectedRoute>
             <ListingDetail />
+          </ProtectedRoute>
+        } />
+        <Route path="/post" element={
+          <ProtectedRoute>
+            <PostListing />
           </ProtectedRoute>
         } />
       </Routes>

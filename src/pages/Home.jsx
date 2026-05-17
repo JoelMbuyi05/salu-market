@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import ListingCard from '../components/ListingCard'
 import CategoryChips from '../components/CategoryChips'
@@ -27,10 +28,9 @@ async function fetchListings(pageNumber, setListings, setHasMore, setLoading, ca
         query = query.eq('category_slug', category)
     }
 
-    // search by title or quartier
     if (search.trim()) {
         const term = search.trim().toLowerCase()
-        query = query.or(`title.ilike.%${search}%,quartier.ilike.%${term}%`)
+        query = query.or(`title.ilike.%${term}%,quartier.ilike.%${term}%`)
     }
 
     const { data, error } = await query
@@ -47,26 +47,22 @@ async function fetchListings(pageNumber, setListings, setHasMore, setLoading, ca
 }
 
 export default function Home() {
-
     const { t } = useTranslation()
+    const navigate = useNavigate()
 
     const [category, setCategory] = useState('all')
-
     const [listings, setListings] = useState([])
     const [page, setPage] = useState(0)
-
     const [loading, setLoading] = useState(false)
     const [hasMore, setHasMore] = useState(true)
-
     const [search, setSearch] = useState('')
 
     const debouncedSearch = useDebounce(search, 500)
-
     const bottomRef = useRef(null)
 
-    useEffect (() => {
+    useEffect(() => {
         fetchListings(0, setListings, setHasMore, setLoading, category, debouncedSearch)
-    }, []);
+    }, [])
 
     useEffect(() => {
         if (page === 0) return
@@ -84,11 +80,11 @@ export default function Home() {
     }, [debouncedSearch])
 
     function handleCategorySelect(slug) {
-      setCategory(slug)
-      setPage(0)
-      setHasMore(true)
-      setListings([])
-      fetchListings(0, setListings, setHasMore, setLoading, slug, debouncedSearch)
+        setCategory(slug)
+        setPage(0)
+        setHasMore(true)
+        setListings([])
+        fetchListings(0, setListings, setHasMore, setLoading, slug, debouncedSearch)
     }
 
     useEffect(() => {
@@ -106,9 +102,20 @@ export default function Home() {
     return (
         <div className="min-h-screen bg-light-bg">
             <div className="bg-primary px-4 py-3 sticky top-0 z-10">
-                <h1 className="text-white font-bold text-xl">Salu</h1>
+
+                {/* top row — title + post button */}
+                <div className="flex items-center justify-between mb-2">
+                    <h1 className="text-white font-bold text-xl">Salu</h1>
+                    <button
+                        onClick={() => navigate('/post')}
+                        className="bg-white text-primary text-sm font-semibold px-3 py-1 rounded-full"
+                    >
+                        + {t('listing.post_listing')}
+                    </button>
+                </div>
+
                 {/* search input */}
-                <div className="relative mt-3">
+                <div className="relative">
                     <input
                         type="text"
                         value={search}
@@ -128,7 +135,7 @@ export default function Home() {
             </div>
 
             {/* sticky chips below header */}
-            <div className="sticky top-24 z-10 shadow-sm">
+            <div className="sticky top-28 z-10 shadow-sm">
                 <CategoryChips selected={category} onSelect={handleCategorySelect} />
             </div>
 
