@@ -6,6 +6,7 @@ import Home from './pages/Home'
 import ListingDetail from './pages/ListingDetail'
 import PostListing from './pages/PostListing'
 import Profile from './pages/Profile'
+import IOSInstallBanner from './components/IOSInstallerBanner'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
@@ -20,6 +21,7 @@ function ProtectedRoute({ children }) {
 export default function App() {
   return (
     <BrowserRouter>
+      <IOSInstallBanner />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
