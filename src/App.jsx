@@ -9,7 +9,11 @@ import Profile from './pages/Profile'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
-  if (loading) return <div>Chargement...</div>
+  if (loading) return (
+    <div className="flex justify-center items-center min-h-screen">
+      <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+    </div>
+  )
   return user ? children : <Navigate to="/login" />
 }
 
@@ -19,16 +23,12 @@ export default function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/" element={
-          <ProtectedRoute>
-            <Home />
-          </ProtectedRoute>
-        } />
-        <Route path="/listing/:id" element={
-          <ProtectedRoute>
-            <ListingDetail />
-          </ProtectedRoute>
-        } />
+
+        {/* Public routes */}
+        <Route path="/" element={<Home />} />
+        <Route path="/listing/:id" element={<ListingDetail />} />
+
+        {/* Protected routes */}
         <Route path="/post" element={
           <ProtectedRoute>
             <PostListing />

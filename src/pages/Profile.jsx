@@ -68,8 +68,8 @@ export default function Profile() {
     }
 
     async function handleLogout() {
+        navigate('/')
         await supabase.auth.signOut()
-        navigate('/login')
     }
 
     if (loading) {
@@ -85,7 +85,15 @@ export default function Profile() {
 
             {/* Header */}
             <div className="bg-primary px-4 py-3 flex items-center justify-between sticky top-0 z-10">
-                <h1 className="text-white font-bold text-xl">{t('profile.my_listings')}</h1>
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => navigate('/')}
+                        className="text-white text-xl leading-none"
+                    >
+                        ←
+                    </button>
+                    <h1 className="text-white font-bold text-xl">{t('profile.my_listings')}</h1>
+                </div>
                 <button
                     onClick={handleLogout}
                     className="text-white text-sm opacity-80"

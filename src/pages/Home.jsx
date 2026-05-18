@@ -6,6 +6,7 @@ import CategoryChips from '../components/CategoryChips'
 import { useDebounce } from '../hooks/useDebounce'
 import { useTranslation } from 'react-i18next'
 import SkeletonCard from '../components/SkeletonCard'
+import { useAuth } from '../store/authContext'
 
 const PAGE_SIZE = 20
 
@@ -48,6 +49,9 @@ async function fetchListings(pageNumber, setListings, setHasMore, setLoading, ca
 }
 
 export default function Home() {
+
+    const { user } = useAuth()
+    
     const { t } = useTranslation()
     const navigate = useNavigate()
 
@@ -108,18 +112,29 @@ export default function Home() {
                 <div className="flex items-center justify-between mb-2">
                     <h1 className="text-white font-bold text-xl">Salu</h1>
                     <div className="flex items-center gap-2">
-                        <button
-                            onClick={() => navigate('/profile')}
-                            className="text-white text-sm opacity-80"
-                        >
-                            {t('nav.profile')}
-                        </button>
-                        <button
-                            onClick={() => navigate('/post')}
-                            className="bg-white text-primary text-sm font-semibold px-3 py-1 rounded-full"
-                        >
-                            + {t('listing.post_listing')}
-                        </button>
+                        {user ? (
+                            <>
+                                <button
+                                    onClick={() => navigate('/profile')}
+                                    className="text-white text-sm opacity-80"
+                                >
+                                    {t('nav.profile')}
+                                </button>
+                                <button
+                                    onClick={() => navigate('/post')}
+                                    className="bg-white text-primary text-sm font-semibold px-3 py-1 rounded-full"
+                                >
+                                    + {t('listing.post_listing')}
+                                </button>
+                            </>
+                        ) : (
+                            <button
+                                onClick={() => navigate('/login')}
+                                className="bg-white text-primary text-sm font-semibold px-3 py-1 rounded-full"
+                            >
+                                {t('auth.login')}
+                            </button>
+                        )}
                     </div>
                 </div>
 
