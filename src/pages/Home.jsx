@@ -105,12 +105,15 @@ export default function Home() {
     }, [hasMore, loading])
 
     return (
-        <div className="min-h-screen bg-light-bg">
-            <div className="bg-primary px-4 py-3 sticky top-0 z-10">
-
-                {/* top row — title + post button */}
+        <div>
+            {/* header — only this stays sticky */}
+            <div className="bg-primary px-4 py-3 sticky top-0 z-20 shadow-md">
                 <div className="flex items-center justify-between mb-2">
-                    <h1 className="text-white font-bold text-xl">Salu</h1>
+                    <img
+                        src="/icon-192.png"
+                        alt="Salu"
+                        className="h-8 w-8 rounded-lg"
+                    />
                     <div className="flex items-center gap-2">
                         {user ? (
                             <>
@@ -124,7 +127,7 @@ export default function Home() {
                                     onClick={() => navigate('/post')}
                                     className="bg-white text-primary text-sm font-semibold px-3 py-1 rounded-full"
                                 >
-                                    + {t('listing.post_listing')}
+                                    +
                                 </button>
                             </>
                         ) : (
@@ -138,14 +141,14 @@ export default function Home() {
                     </div>
                 </div>
 
-                {/* search input */}
+                {/* search */}
                 <div className="relative">
                     <input
                         type="text"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder={t('search.placeholder')}
-                        className="w-full bg-white rounded-lg px-4 py-2 text-sm text-near-black outline-none pr-8"
+                        className="w-full bg-white rounded-full px-4 py-2 text-sm text-near-black outline-none pr-8"
                     />
                     {search && (
                         <button
@@ -157,9 +160,8 @@ export default function Home() {
                     )}
                 </div>
             </div>
-
-            {/* sticky chips below header */}
-            <div className="sticky top-28 z-10 shadow-sm">
+            {/* not sticky, scrolls with page */}
+            <div className="bg-white border-b border-border">
                 <CategoryChips selected={category} onSelect={handleCategorySelect} />
             </div>
 

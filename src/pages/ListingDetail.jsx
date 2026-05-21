@@ -13,6 +13,10 @@ export default function ListingDetail() {
     const [loading, setLoading] = useState(true)
     const [currentImage, setCurrentImage] = useState(0)
 
+    // Swipe states
+    const [touchStart, setTouchStart] = useState(null)
+    const [touchEnd, setTouchEnd] = useState(null)
+
     async function fetchListing() {
 
         const { data, error } = await supabase
@@ -30,11 +34,12 @@ export default function ListingDetail() {
         }
 
         data.listing_images.sort((a, b) => a.position - b.position)
+
         setListing(data)
 
         const { data: sellerData } = await supabase
             .from('users')
-            .select('full_name, phone, quartier')
+            .select('full_name, phone, quartier, avatar_url')
             .eq('id', data.user_id)
             .single()
 
@@ -42,7 +47,9 @@ export default function ListingDetail() {
 
         await supabase
             .from('listings')
-            .update({ view_count: (data.view_count || 0) + 1 })
+            .update({
+                view_count: (data.view_count || 0) + 1
+            })
             .eq('id', id)
 
         setLoading(false)
@@ -53,12 +60,43 @@ export default function ListingDetail() {
         fetchListing()
     }, [id])
 
+    // Swipe handlers
+    function handleTouchStart(e) {
+        setTouchStart(e.targetTouches[0].clientX)
+    }
+
+    function handleTouchMove(e) {
+        setTouchEnd(e.targetTouches[0].clientX)
+    }
+
+    function handleTouchEnd() {
+        if (!touchStart || !touchEnd) return
+
+        const distance = touchStart - touchEnd
+
+        // Swipe left
+        if (distance > 50 && currentImage < images.length - 1) {
+            setCurrentImage(prev => prev + 1)
+        }
+
+        // Swipe right
+        if (distance < -50 && currentImage > 0) {
+            setCurrentImage(prev => prev - 1)
+        }
+
+        setTouchStart(null)
+        setTouchEnd(null)
+    }
+
     function buildWhatsAppLink() {
         if (!seller?.phone) return '#'
+
         const phone = seller.phone.replace(/\D/g, '')
+
         const message = encodeURIComponent(
             `Bonjour, je suis intéressé(e) par votre annonce "${listing.title}" sur Salu. Est-ce encore disponible ?`
         )
+
         return `https://wa.me/${phone}?text=${message}`
     }
 
@@ -72,7 +110,7 @@ export default function ListingDetail() {
 
     if (!listing) return null
 
-    const images = listing.listing_images
+    const images = listing.listing_images || []
     const hasImages = images.length > 0
 
     return (
@@ -86,70 +124,94 @@ export default function ListingDetail() {
                 >
                     ←
                 </button>
+
                 <h1 className="text-white font-semibold text-base line-clamp-1">
                     {listing.title}
                 </h1>
             </div>
 
             {/* Images */}
-            <div className="bg-white">
-                <div className="h-64 w-full overflow-hidden">
-                    <img
-                        src={hasImages ? images[currentImage].url : 'https://placehold.co/400x300?text=Salu'}
-                        alt={listing.title}
-                        className="w-full h-full object-cover"
-                    />
-                </div>
+                <div className="bg-white">
 
-                {images.length > 1 && (
-                    <div className="flex justify-center gap-2 py-2">
-                        {images.map((_, i) => (
-                            <button
-                                key={i}
-                                onClick={() => setCurrentImage(i)}
-                                className={`w-2 h-2 rounded-full transition-colors ${
-                                    i === currentImage ? 'bg-primary' : 'bg-border'
-                                }`}
-                            />
-                        ))}
+                    <div
+                        className="h-72 w-full overflow-hidden relative"
+                        onTouchStart={handleTouchStart}
+                        onTouchMove={handleTouchMove}
+                        onTouchEnd={handleTouchEnd}
+                    >
+                        <img
+                            src={
+                                hasImages
+                                    ? images[currentImage].url
+                                    : 'https://placehold.co/400x300/f5f5f5/888787?text=Salu'
+                            }
+                            alt={listing.title}
+                            className="w-full h-full object-cover"
+                        />
+
+                        {/* Image counter */}
+                        {images.length > 1 && (
+                            <div className="absolute top-3 right-3 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded-full">
+                                {currentImage + 1}/{images.length}
+                            </div>
+                        )}
                     </div>
-                )}
-            </div>
+
+                </div>
 
             {/* Listing info */}
             <div className="bg-white mt-2 px-4 py-4 flex flex-col gap-2">
+
                 <h2 className="text-near-black font-bold text-lg leading-snug">
                     {listing.title}
                 </h2>
+
                 <p className="text-primary font-bold text-2xl">
                     {listing.price.toLocaleString()} FC
                 </p>
+
                 <p className="text-muted text-sm">
                     {listing.quartier} · {listing.category_slug}
                 </p>
+
             </div>
 
             {/* Description */}
             {listing.description && (
                 <div className="bg-white mt-2 px-4 py-4">
-                    <h3 className="text-near-black font-semibold mb-2">Description</h3>
+
+                    <h3 className="text-near-black font-semibold mb-2">
+                        Description
+                    </h3>
+
                     <p className="text-near-black text-sm leading-relaxed">
                         {listing.description}
                     </p>
+
                 </div>
             )}
 
             {/* Seller card */}
             <div className="bg-white mt-2 px-4 py-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-badge-bg flex items-center justify-center">
-                    <span className="text-primary font-bold text-sm">
-                        {seller?.full_name?.[0]?.toUpperCase() || '?'}
-                    </span>
+                <div className="w-10 h-10 rounded-full overflow-hidden bg-badge-bg flex items-center justify-center">
+                    {seller?.avatar_url ? (
+                        <img
+                            src={seller.avatar_url}
+                            alt={seller.full_name}
+                            className="w-full h-full object-cover"
+                        />
+                    ) : (
+                        <span className="text-primary font-bold text-sm">
+                            {seller?.full_name?.[0]?.toUpperCase() || '?'}
+                        </span>
+                    )}
                 </div>
+
                 <div>
                     <p className="text-near-black font-semibold text-sm">
                         {seller?.full_name || 'Vendeur'}
                     </p>
+
                     <p className="text-muted text-xs">
                         {seller?.quartier || ''}
                     </p>
@@ -158,6 +220,7 @@ export default function ListingDetail() {
 
             {/* WhatsApp button */}
             <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-border">
+
                 <a
                     href={buildWhatsAppLink()}
                     target="_blank"
@@ -165,8 +228,12 @@ export default function ListingDetail() {
                     className="flex items-center justify-center gap-2 bg-whatsapp text-white w-full rounded-lg py-3 font-semibold"
                 >
                     <span>📱</span>
-                    <span>{t('listing.contact_seller')} via WhatsApp</span>
+
+                    <span>
+                        {t('listing.contact_seller')} via WhatsApp
+                    </span>
                 </a>
+
             </div>
 
         </div>
