@@ -11,9 +11,9 @@ export default defineConfig({
       manifest: {
         name: 'Salu Market',
         short_name: 'Salu',
-        description: 'Achetez et vendez à Mbuji-Mayi',
+        description: 'Achète, vends. Simplement en un clic.',
         theme_color: '#1a6b3c',
-        background_color: '#ffffff',
+        background_color: '#1a6b3c',
         display: 'standalone',
         orientation: 'portrait',
         scope: '/',

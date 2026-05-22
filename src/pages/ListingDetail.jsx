@@ -147,6 +147,7 @@ export default function ListingDetail() {
                             }
                             alt={listing.title}
                             className="w-full h-full object-cover"
+                            loading="eager"
                         />
 
                         {/* Image counter */}

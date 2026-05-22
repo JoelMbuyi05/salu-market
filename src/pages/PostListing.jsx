@@ -32,18 +32,36 @@ export default function PostListing() {
     const [error, setError] = useState('')
 
     async function handleImagePick(e) {
-        const files = Array.from(e.target.files).slice(0, 5)
-        const options = {
-            maxSizeMB: 0.5,
-            maxWidthOrHeight: 1024,
-            useWebWorker: true
-        }
-        const compressed = await Promise.all(
-            files.map(file => imageCompression(file, options))
-        )
-        setImages(compressed)
-        const urls = compressed.map(f => URL.createObjectURL(f))
-        setPreviews(urls)
+    const newFiles = Array.from(e.target.files)
+    
+    // limit total to 5
+    const remaining = 5 - images.length
+    if (remaining <= 0) return
+    
+    const filesToAdd = newFiles.slice(0, remaining)
+    
+    const options = {
+        maxSizeMB: 0.5,
+        maxWidthOrHeight: 1024,
+        useWebWorker: true
+    }
+    
+    const compressed = await Promise.all(
+        filesToAdd.map(file => imageCompression(file, options))
+    )
+    
+    // append to existing instead of replacing
+    setImages(prev => [...prev, ...compressed])
+    const urls = compressed.map(f => URL.createObjectURL(f))
+    setPreviews(prev => [...prev, ...urls])
+    
+    // reset input so same file can be picked again
+    e.target.value = ''
+    }
+
+    function handleRemoveImage(index) {
+        setImages(prev => prev.filter((_, i) => i !== index))
+        setPreviews(prev => prev.filter((_, i) => i !== index))
     }
 
     async function handleSubmit() {
@@ -107,35 +125,49 @@ export default function PostListing() {
 
                 {/* Photos first — more visual */}
                 <div className="bg-white rounded-2xl p-4 flex flex-col gap-3">
-                    <label className="text-near-black font-semibold text-sm">
-                        📷 {t('listing.photos')} (max 5)
-                    </label>
+                    <div className="flex items-center justify-between">
+                        <label className="text-near-black font-semibold text-sm">
+                            📷 {t('listing.photos')}
+                        </label>
+                        <span className="text-muted text-xs">{images.length}/5</span>
+                    </div>
 
+                    {/* image previews with remove button */}
                     {previews.length > 0 && (
                         <div className="flex gap-2 overflow-x-auto pb-1">
                             {previews.map((url, i) => (
-                                <img
-                                    key={i}
-                                    src={url}
-                                    alt={`preview ${i}`}
-                                    className="w-24 h-24 object-cover rounded-xl flex-shrink-0"
-                                />
+                                <div key={i} className="relative flex-shrink-0">
+                                    <img
+                                        src={url}
+                                        alt={`preview ${i}`}
+                                        className="w-24 h-24 object-cover rounded-xl"
+                                    />
+                                    {/* remove button */}
+                                    <button
+                                        onClick={() => handleRemoveImage(i)}
+                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold shadow"
+                                    >
+                                        ×
+                                    </button>
+                                </div>
                             ))}
                         </div>
                     )}
 
-                    <label className="flex items-center justify-center gap-2 bg-light-bg border-2 border-dashed border-border rounded-xl py-5 cursor-pointer">
-                        <span className="text-muted text-sm">
-                            {previews.length > 0 ? `${previews.length} photo(s) sélectionnée(s)` : 'Appuyer pour ajouter des photos'}
-                        </span>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            multiple
-                            onChange={handleImagePick}
-                            className="hidden"
-                        />
-                    </label>
+                    {/* add more button — only show if less than 5 */}
+                    {images.length < 5 && (
+                        <label className="flex items-center justify-center gap-2 bg-light-bg border-2 border-dashed border-border rounded-xl py-4 cursor-pointer">
+                            <span className="text-muted text-sm">
+                                + Ajouter une photo
+                            </span>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImagePick}
+                                className="hidden"
+                            />
+                        </label>
+                    )}
                 </div>
 
                 {/* Title */}
