@@ -51,7 +51,7 @@ export default function Register() {
                 />
                 <h1 className="text-white text-3xl font-bold">Salu Market</h1>
                 <p className="text-accent text-sm mt-1">
-                    Achète, vends. Simplement en un clic.
+                    {t('tagline')}
                 </p>
             </div>
 
