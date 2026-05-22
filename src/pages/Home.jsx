@@ -114,6 +114,8 @@ export default function Home() {
                         alt="Salu"
                         className="h-8 w-8 rounded-lg"
                     />
+                    <span className="text-white font-bold text-lg">Salu Market</span>
+                    
                     <div className="flex items-center gap-2">
                         {user ? (
                             <>
