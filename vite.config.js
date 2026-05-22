@@ -13,7 +13,7 @@ export default defineConfig({
         short_name: 'Salu',
         description: 'Achète, vends. Simplement en un clic.',
         theme_color: '#1a6b3c',
-        background_color: '#1a6b3c',
+        background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait',
         scope: '/',
