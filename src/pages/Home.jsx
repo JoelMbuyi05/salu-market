@@ -109,13 +109,14 @@ export default function Home() {
             {/* header — only this stays sticky */}
             <div className="bg-primary px-4 py-3 sticky top-0 z-20 shadow-md">
                 <div className="flex items-center justify-between mb-2">
-                    <img
-                        src="/icon-192.png"
-                        alt="Salu"
-                        className="h-8 w-8 rounded-lg"
-                    />
-                    <span className="text-white font-bold text-lg">Salu Market</span>
-                    
+                    <div className="flex items-center gap-2">
+                        <img
+                            src="/icon-192.png"
+                            alt="Salu"
+                            className="h-8 w-8 rounded-lg"
+                        />
+                        <span className="text-white font-bold text-lg">Salu Market</span>
+                    </div>
                     <div className="flex items-center gap-2">
                         {user ? (
                             <>

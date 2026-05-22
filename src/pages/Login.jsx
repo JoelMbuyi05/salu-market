@@ -27,56 +27,71 @@ export default function Login() {
     return (
         <div className="min-h-screen bg-white flex flex-col">
 
-            <div className="bg-primary px-4 py-8 text-center">
-                <h1 className="text-white text-3xl font-bold">Salu</h1>
+            {/* top section with logo */}
+            <div className="bg-primary flex flex-col items-center justify-center px-6 pt-16 pb-10">
+                <img
+                    src="/icon-512.png"
+                    alt="Salu"
+                    className="w-20 h-20 rounded-2xl mb-4 shadow-lg"
+                />
+                <h1 className="text-white text-3xl font-bold">Salu Market</h1>
                 <p className="text-accent text-sm mt-1">
-                    Achetez et vendez à Mbuji-Mayi
+                    Achète, vends. Simplement en un clic.
                 </p>
             </div>
 
-            <div className="flex flex-col gap-4 px-6 mt-8">
+            {/* white curved section */}
+            <div className="flex-1 bg-white rounded-t-3xl -mt-4 px-6 pt-8 flex flex-col gap-5">
 
-                <div className="flex flex-col gap-1">
-                    <label className="text-near-black text-sm font-medium">
-                        {t('auth.email')}
-                    </label>
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="bg-light-bg border border-border rounded-lg px-4 py-3 text-near-black text-sm outline-none focus:border-primary"
-                        placeholder="exemple@gmail.com"
-                    />
-                </div>
+                <h2 className="text-near-black text-xl font-bold">
+                    {t('auth.login')}
+                </h2>
 
-                <div className="flex flex-col gap-1">
-                    <label className="text-near-black text-sm font-medium">
-                        {t('auth.password')}
-                    </label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="bg-light-bg border border-border rounded-lg px-4 py-3 text-near-black text-sm outline-none focus:border-primary"
-                        placeholder="••••••••"
-                    />
+                <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-1.5">
+                        <label className="text-near-black text-sm font-medium">
+                            {t('auth.email')}
+                        </label>
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="bg-light-bg rounded-xl px-4 py-3 text-near-black text-sm outline-none focus:ring-2 focus:ring-primary"
+                            placeholder="exemple@gmail.com"
+                        />
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                        <label className="text-near-black text-sm font-medium">
+                            {t('auth.password')}
+                        </label>
+                        <input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="bg-light-bg rounded-xl px-4 py-3 text-near-black text-sm outline-none focus:ring-2 focus:ring-primary"
+                            placeholder="••••••••"
+                        />
+                    </div>
                 </div>
 
                 {error && (
-                    <p className="text-red-500 text-sm">{error}</p>
+                    <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+                        <p className="text-red-500 text-sm">{error}</p>
+                    </div>
                 )}
 
                 <button
                     onClick={handleLogin}
                     disabled={loading}
-                    className="bg-primary text-white w-full rounded-lg py-3 font-semibold mt-2 disabled:opacity-60"
+                    className="bg-primary text-white w-full rounded-xl py-3.5 font-semibold text-base disabled:opacity-60 mt-2"
                 >
                     {loading ? t('common.loading') : t('auth.login')}
                 </button>
 
-                <p className="text-center text-sm text-muted mt-4">
+                <p className="text-center text-sm text-muted">
                     Pas de compte ?{' '}
-                    <Link to="/register" className="text-primary font-medium">
+                    <Link to="/register" className="text-primary font-semibold">
                         {t('auth.register')}
                     </Link>
                 </p>
