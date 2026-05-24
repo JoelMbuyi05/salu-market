@@ -9,9 +9,6 @@ export default defineConfig({
       registerType: 'autoUpdate',
       injectRegister: 'inline',
       includeAssets: ['favicon.png', 'icon-192.png', 'icon-512.png'],
-      pwaAssets: {
-        config: true,
-      },
       manifest: {
         name: 'Salu Market',
         short_name: 'Salu',

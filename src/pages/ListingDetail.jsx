@@ -17,14 +17,15 @@ export default function ListingDetail() {
     const [isSaved, setIsSaved] = useState(false)
     const [touchStart, setTouchStart] = useState(null)
     const [touchEnd, setTouchEnd] = useState(null)
+    const [showReportModal, setShowReportModal] = useState(false)
+    const [reportReason, setReportReason] = useState('')
+    const [reportLoading, setReportLoading] = useState(false)
+    const [reportDone, setReportDone] = useState(false)
 
     async function fetchListing() {
         const { data, error } = await supabase
             .from('listings')
-            .select(`
-                *,
-                listing_images (url, position)
-            `)
+            .select(`*, listing_images (url, position)`)
             .eq('id', id)
             .single()
 
@@ -83,6 +84,34 @@ export default function ListingDetail() {
         }
     }
 
+    async function handleReport() {
+        if (!user) {
+            navigate('/login')
+            return
+        }
+        if (!reportReason.trim()) return
+        setReportLoading(true)
+
+        const { error } = await supabase
+            .from('reports')
+            .insert({
+                user_id: user.id,
+                listing_id: id,
+                reason: reportReason
+            })
+
+        if (!error) {
+            // flag the listing
+            await supabase
+                .from('listings')
+                .update({ is_flagged: true })
+                .eq('id', id)
+            setReportDone(true)
+        }
+
+        setReportLoading(false)
+    }
+
     useEffect(() => {
         fetchListing()
         checkIfSaved()
@@ -131,6 +160,15 @@ export default function ListingDetail() {
     const images = listing.listing_images
     const hasImages = images.length > 0
 
+    const reportReasons = [
+        'Arnaque / Faux article',
+        'Mauvaise catégorie',
+        'Article déjà vendu',
+        'Contenu inapproprié',
+        'Prix abusif',
+        'Autre'
+    ]
+
     return (
         <div className="min-h-screen bg-light-bg pb-24">
 
@@ -145,6 +183,16 @@ export default function ListingDetail() {
                 <h1 className="text-white font-semibold text-base line-clamp-1 flex-1">
                     {listing.title}
                 </h1>
+                {/* report button */}
+                <button
+                    onClick={() => {
+                        if (!user) { navigate('/login'); return }
+                        setShowReportModal(true)
+                    }}
+                    className="text-white opacity-60 text-sm"
+                >
+                    ⚑
+                </button>
             </div>
 
             {/* Images */}
@@ -211,9 +259,6 @@ export default function ListingDetail() {
                     <p className="text-near-black font-semibold text-sm">
                         {seller?.full_name || 'Vendeur'}
                     </p>
-                    <p className="text-muted text-xs">
-                        📍 {seller?.quartier || ''}
-                    </p>
                 </div>
             </div>
 
@@ -223,8 +268,8 @@ export default function ListingDetail() {
                     onClick={toggleSave}
                     className={`flex items-center justify-center w-12 h-12 rounded-xl border-2 flex-shrink-0 ${
                         isSaved
-                            ? 'bg-badge-bg border-primary text-primary'
-                            : 'bg-white border-border text-muted'
+                            ? 'bg-badge-bg border-primary'
+                            : 'bg-white border-border'
                     }`}
                 >
                     {isSaved ? '❤️' : '🤍'}
@@ -240,6 +285,74 @@ export default function ListingDetail() {
                     <span>{t('listing.contact_seller')} via WhatsApp</span>
                 </a>
             </div>
+
+            {/* Report Modal */}
+            {showReportModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end">
+                    <div className="bg-white w-full rounded-t-2xl p-6 flex flex-col gap-4">
+
+                        {reportDone ? (
+                            <div className="text-center py-6">
+                                <p className="text-2xl mb-2">✅</p>
+                                <p className="text-near-black font-semibold">Signalement envoyé</p>
+                                <p className="text-muted text-sm mt-1">Merci, nous allons examiner cette annonce.</p>
+                                <button
+                                    onClick={() => {
+                                        setShowReportModal(false)
+                                        setReportDone(false)
+                                        setReportReason('')
+                                    }}
+                                    className="mt-4 bg-primary text-white px-6 py-2 rounded-full text-sm font-semibold"
+                                >
+                                    Fermer
+                                </button>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-near-black font-bold text-lg">
+                                        {t('listing.report')}
+                                    </h3>
+                                    <button
+                                        onClick={() => setShowReportModal(false)}
+                                        className="text-muted text-2xl leading-none"
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+
+                                <p className="text-muted text-sm">
+                                    Pourquoi signalez-vous cette annonce ?
+                                </p>
+
+                                <div className="flex flex-col gap-2">
+                                    {reportReasons.map(reason => (
+                                        <button
+                                            key={reason}
+                                            onClick={() => setReportReason(reason)}
+                                            className={`text-left px-4 py-3 rounded-xl border text-sm ${
+                                                reportReason === reason
+                                                    ? 'border-primary bg-badge-bg text-primary font-semibold'
+                                                    : 'border-border text-near-black'
+                                            }`}
+                                        >
+                                            {reason}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <button
+                                    onClick={handleReport}
+                                    disabled={!reportReason || reportLoading}
+                                    className="bg-red-500 text-white w-full rounded-xl py-3 font-semibold disabled:opacity-40"
+                                >
+                                    {reportLoading ? 'Envoi...' : 'Envoyer le signalement'}
+                                </button>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
 
         </div>
     )
