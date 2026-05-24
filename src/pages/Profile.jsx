@@ -15,14 +15,16 @@ export default function Profile() {
     const [favourites, setFavourites] = useState([])
     const [loading, setLoading] = useState(true)
     const [activeTab, setActiveTab] = useState('listings')
+    const [isAdmin, setIsAdmin] = useState(false)
 
     async function fetchProfile() {
         const { data } = await supabase
             .from('users')
-            .select('full_name, phone, quartier, avatar_url')
+            .select('full_name, phone, quartier, avatar_url, is_admin')
             .eq('id', user.id)
             .single()
         setProfile(data)
+        setIsAdmin(data?.is_admin || false)
     }
 
     async function fetchMyListings() {
@@ -126,12 +128,22 @@ export default function Profile() {
                     </button>
                     <h1 className="text-white font-bold text-lg">Mon Profil</h1>
                 </div>
-                <button
-                    onClick={handleLogout}
-                    className="text-white text-sm opacity-80"
-                >
-                    {t('auth.logout')}
-                </button>
+                <div className="flex items-center gap-3">
+                    {isAdmin && (
+                        <button
+                            onClick={() => navigate('/admin')}
+                            className="text-white text-sm opacity-80 border border-white border-opacity-30 px-2 py-1 rounded-lg"
+                        >
+                            ⚙️ Admin
+                        </button>
+                    )}
+                    <button
+                        onClick={handleLogout}
+                        className="text-white text-sm opacity-80"
+                    >
+                        {t('auth.logout')}
+                    </button>
+                </div>
             </div>
 
             {/* Profile card */}
