@@ -209,12 +209,28 @@ export default function ListingDetail() {
                         className="w-full h-full object-cover"
                         loading="eager"
                     />
+                    {/* counter top right */}
                     {images.length > 1 && (
                         <div className="absolute top-3 right-3 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded-full">
                             {currentImage + 1}/{images.length}
                         </div>
                     )}
                 </div>
+
+                {/* dots below image */}
+                {images.length > 1 && (
+                    <div className="flex justify-center gap-2 py-2 bg-white">
+                        {images.map((_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => setCurrentImage(i)}
+                                className={`w-2 h-2 rounded-full transition-colors ${
+                                    i === currentImage ? 'bg-primary' : 'bg-border'
+                                }`}
+                            />
+                        ))}
+                    </div>
+                )}
             </div>
 
             {/* Listing info */}
