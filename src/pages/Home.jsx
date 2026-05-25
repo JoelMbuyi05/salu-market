@@ -61,6 +61,7 @@ export default function Home() {
     const [loading, setLoading] = useState(false)
     const [hasMore, setHasMore] = useState(true)
     const [search, setSearch] = useState('')
+    const [scrolled, setScrolled] = useState(false)
 
     const debouncedSearch = useDebounce(search, 500)
     const bottomRef = useRef(null)
@@ -104,10 +105,26 @@ export default function Home() {
         return () => observer.disconnect()
     }, [hasMore, loading])
 
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 10)
+        }
+
+        window.addEventListener('scroll', handleScroll)
+
+        return () => { 
+            window.removeEventListener('scroll', handleScroll)
+        }
+    }, [])
+
     return (
         <div>
             {/* header — only this stays sticky */}
-            <div className="bg-primary px-4 pt-[env(safe-area-inset-top)] pb-3 sticky top-0 z-20 shadow-md">
+            <div className={`sticky top-0 z-20 px-4 py-3 transition-all duration-300 ${
+                    scrolled
+                        ? 'bg-primary/70 backdrop-blur-xl border-b border-white/10'
+                        : 'bg-primary'
+                }`}>
                 <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                         <img
