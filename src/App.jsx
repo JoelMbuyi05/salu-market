@@ -8,7 +8,7 @@ import ListingDetail from './pages/ListingDetail'
 import PostListing from './pages/PostListing'
 import Profile from './pages/Profile'
 import Admin from './pages/Admin'
-import IOSInstallBanner from './components/IOSInstallBanner'
+import IOSInstallBanner from './components/IOSInstallerBanner'
 import SplashScreen from './components/SplashScreen'
 
 function ProtectedRoute({ children }) {
