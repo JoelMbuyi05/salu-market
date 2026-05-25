@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './store/authContext'
 import Login from './pages/Login'
@@ -6,48 +7,53 @@ import Home from './pages/Home'
 import ListingDetail from './pages/ListingDetail'
 import PostListing from './pages/PostListing'
 import Profile from './pages/Profile'
-import IOSInstallBanner from './components/IOSInstallerBanner'
 import Admin from './pages/Admin'
+import IOSInstallBanner from './components/IOSInstallBanner'
+import SplashScreen from './components/SplashScreen'
 
 function ProtectedRoute({ children }) {
-  const { user, loading } = useAuth()
-  if (loading) return (
-    <div className="flex justify-center items-center min-h-screen">
-      <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-    </div>
-  )
-  return user ? children : <Navigate to="/login" />
+    const { user, loading } = useAuth()
+    if (loading) return (
+        <div className="flex justify-center items-center min-h-screen">
+            <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        </div>
+    )
+    return user ? children : <Navigate to="/login" />
 }
 
 export default function App() {
-  return (
-    <BrowserRouter>
-      <IOSInstallBanner />
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+    const [showSplash, setShowSplash] = useState(true)
 
-        {/* Public routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/listing/:id" element={<ListingDetail />} />
+    return (
+        <>
+            {showSplash && (
+                <SplashScreen onFinish={() => setShowSplash(false)} />
+            )}
 
-        {/* Protected routes */}
-        <Route path="/post" element={
-          <ProtectedRoute>
-            <PostListing />
-          </ProtectedRoute>
-        } />
-        <Route path="/profile" element={
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        } />
-        <Route path="/admin" element={
-          <ProtectedRoute>
-            <Admin />
-          </ProtectedRoute>
-        } />
-      </Routes>
-    </BrowserRouter>
-  )
+            <BrowserRouter>
+                <IOSInstallBanner />
+                <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/" element={<Home />} />
+                    <Route path="/listing/:id" element={<ListingDetail />} />
+                    <Route path="/post" element={
+                        <ProtectedRoute>
+                            <PostListing />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/profile" element={
+                        <ProtectedRoute>
+                            <Profile />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/admin" element={
+                        <ProtectedRoute>
+                            <Admin />
+                        </ProtectedRoute>
+                    } />
+                </Routes>
+            </BrowserRouter>
+        </>
+    )
 }
