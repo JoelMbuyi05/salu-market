@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
+import { translateAuthError } from '../lib/authErrors'
 
 export default function Login() {
     const { t } = useTranslation()
@@ -9,6 +10,7 @@ export default function Login() {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [showPassword, setShowPassword] = useState(false)
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
 
@@ -17,7 +19,7 @@ export default function Login() {
         setError('')
         const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) {
-            setError(error.message)
+            setError(translateAuthError(error.message))
         } else {
             navigate('/')
         }
@@ -26,8 +28,6 @@ export default function Login() {
 
     return (
         <div className="min-h-screen bg-white flex flex-col">
-
-            {/* top section with logo */}
             <div className="bg-primary flex flex-col items-center justify-center px-6 pt-16 pb-10">
                 <img
                     src="/icon-512.png"
@@ -35,14 +35,12 @@ export default function Login() {
                     className="w-20 h-20 rounded-2xl mb-4 shadow-lg"
                 />
                 <h1 className="text-white text-3xl font-bold">Salu Market</h1>
-                <p className="text-accent text-sm mt-1">
+                <p className="text-accent text-sm mt-1 text-center">
                     {t('tagline')}
                 </p>
             </div>
 
-            {/* white curved section */}
             <div className="flex-1 bg-white rounded-t-3xl -mt-4 px-6 pt-8 flex flex-col gap-5">
-
                 <h2 className="text-near-black text-xl font-bold">
                     {t('auth.login')}
                 </h2>
@@ -65,13 +63,22 @@ export default function Login() {
                         <label className="text-near-black text-sm font-medium">
                             {t('auth.password')}
                         </label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="bg-light-bg rounded-xl px-4 py-3 text-near-black text-sm outline-none focus:ring-2 focus:ring-primary"
-                            placeholder="••••••••"
-                        />
+                        <div className="relative">
+                            <input
+                                type={showPassword ? 'text' : 'password'}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="bg-light-bg rounded-xl px-4 py-3 text-near-black text-sm outline-none focus:ring-2 focus:ring-primary w-full pr-12"
+                                placeholder="••••••••"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted text-sm"
+                            >
+                                {showPassword ? '🙈' : '👁'}
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -95,7 +102,6 @@ export default function Login() {
                         {t('auth.register')}
                     </Link>
                 </p>
-
             </div>
         </div>
     )

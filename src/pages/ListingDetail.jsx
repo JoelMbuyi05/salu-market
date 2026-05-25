@@ -119,11 +119,16 @@ export default function ListingDetail() {
 
     function buildWhatsAppLink() {
         if (!seller?.phone) return '#'
+        // remove everything except digits
         const phone = seller.phone.replace(/\D/g, '')
+        // if starts with 0, replace with 243 (DRC country code)
+        const formattedPhone = phone.startsWith('0') 
+            ? '243' + phone.slice(1) 
+            : phone
         const message = encodeURIComponent(
             `Bonjour, je suis intéressé(e) par votre annonce "${listing.title}" sur Salu. Est-ce encore disponible ?`
         )
-        return `https://wa.me/${phone}?text=${message}`
+        return `https://wa.me/${formattedPhone}?text=${message}`
     }
 
     function handleTouchStart(e) {
@@ -280,26 +285,39 @@ export default function ListingDetail() {
 
             {/* Bottom buttons */}
             <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-border flex gap-3">
-                <button
-                    onClick={toggleSave}
-                    className={`flex items-center justify-center w-12 h-12 rounded-xl border-2 flex-shrink-0 ${
-                        isSaved
-                            ? 'bg-badge-bg border-primary'
-                            : 'bg-white border-border'
-                    }`}
-                >
-                    {isSaved ? '❤️' : '🤍'}
-                </button>
 
-                <a
-                    href={buildWhatsAppLink()}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 bg-whatsapp text-white rounded-xl py-3 font-semibold"
-                >
-                    <span>📱</span>
-                    <span>{t('listing.contact_seller')} via WhatsApp</span>
-                </a>
+                {user?.id !== listing.user_id ? (
+                    <>
+                        {/* save button */}
+                        <button
+                            onClick={toggleSave}
+                            className={`flex items-center justify-center w-12 h-12 rounded-xl border-2 flex-shrink-0 ${
+                                isSaved
+                                    ? 'bg-badge-bg border-primary'
+                                    : 'bg-white border-border'
+                            }`}
+                        >
+                            {isSaved ? '❤️' : '🤍'}
+                        </button>
+
+                        {/* whatsapp button */}
+                        <a
+                            href={buildWhatsAppLink()}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex-1 flex items-center justify-center gap-2 bg-whatsapp text-white rounded-xl py-3 font-semibold"
+                        >
+                            <span>📱</span>
+                            <span>{t('listing.contact_seller')} via WhatsApp</span>
+                        </a>
+                    </>
+                ) : (
+                    <div className="flex-1 flex items-center justify-center gap-2 bg-light-bg text-muted rounded-xl py-3 font-semibold">
+                        <span>✏️</span>
+                        <span>Votre annonce</span>
+                    </div>
+                )}
+
             </div>
 
             {/* Report Modal */}
