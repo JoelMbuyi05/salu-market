@@ -163,6 +163,7 @@ export default function PostListing() {
                             <input
                                 type="file"
                                 accept="image/*"
+                                multiple
                                 onChange={handleImagePick}
                                 className="hidden"
                             />

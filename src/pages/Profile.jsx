@@ -80,6 +80,23 @@ export default function Profile() {
         setProfile(prev => ({ ...prev, avatar_url: data.publicUrl }))
     }
 
+    async function handleRemoveAvatar() {
+        if (!window.confirm('Supprimer votre photo de profil ?')) return
+
+        // delete from storage
+        await supabase.storage
+            .from('avatars')
+            .remove([`${user.id}/avatar.jpg`])
+
+        // set avatar_url to null in users table
+        await supabase
+            .from('users')
+            .update({ avatar_url: null })
+            .eq('id', user.id)
+
+        setProfile(prev => ({ ...prev, avatar_url: null }))
+    }
+
     async function handleMarkSold(listingId, currentStatus) {
         await supabase
             .from('listings')
@@ -162,6 +179,8 @@ export default function Profile() {
                             </span>
                         )}
                     </div>
+
+                    {/* change photo button */}
                     <label className="absolute bottom-0 right-0 bg-primary rounded-full w-5 h-5 flex items-center justify-center cursor-pointer">
                         <span className="text-white text-xs">+</span>
                         <input
@@ -172,6 +191,16 @@ export default function Profile() {
                         />
                     </label>
                 </div>
+
+                {/* remove photo button — only show if has avatar */}
+                {profile?.avatar_url && (
+                    <button
+                        onClick={handleRemoveAvatar}
+                        className="text-red-400 text-xs mt-1"
+                    >
+                        Supprimer la photo
+                    </button>
+                )}
                 <div>
                     <p className="text-near-black font-bold text-base">
                         {profile?.full_name || 'Vendeur'}
