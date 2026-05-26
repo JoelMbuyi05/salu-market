@@ -73,11 +73,16 @@ export default function Profile() {
         const { data } = supabase.storage
             .from('avatars')
             .getPublicUrl(fileName)
+
+        // add timestamp to bust browser cache
+        const urlWithTimestamp = `${data.publicUrl}?t=${Date.now()}`
+
         await supabase
             .from('users')
-            .update({ avatar_url: data.publicUrl })
+            .update({ avatar_url: urlWithTimestamp })
             .eq('id', user.id)
-        setProfile(prev => ({ ...prev, avatar_url: data.publicUrl }))
+
+        setProfile(prev => ({ ...prev, avatar_url: urlWithTimestamp }))
     }
 
     async function handleRemoveAvatar() {
