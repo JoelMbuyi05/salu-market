@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase'
 import { translateAuthError } from '../lib/authErrors'
 
 export default function Login() {
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation()
     const navigate = useNavigate()
 
     const [email, setEmail] = useState('')
@@ -19,7 +19,7 @@ export default function Login() {
         setError('')
         const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) {
-            setError(translateAuthError(error.message))
+            setError(translateAuthError(error.message, i18n.language))
         } else {
             navigate('/')
         }
