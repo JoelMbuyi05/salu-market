@@ -10,6 +10,8 @@ import Profile from './pages/Profile'
 import Admin from './pages/Admin'
 import IOSInstallBanner from './components/IOSInstallerBanner'
 import SplashScreen from './components/SplashScreen'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 
 function ProtectedRoute({ children }) {
     const { user, loading } = useAuth()
@@ -52,6 +54,8 @@ export default function App() {
                             <Admin />
                         </ProtectedRoute>
                     } />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
                 </Routes>
             </BrowserRouter>
         </>
