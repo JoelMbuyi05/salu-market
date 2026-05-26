@@ -219,7 +219,9 @@ export default function Profile() {
                     {showAvatarMenu && (
                         <div className="absolute top-20 left-0 bg-white rounded-2xl shadow-xl border border-border z-20 w-48 overflow-hidden">
                             <label className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-light-bg">
-                                <span className="text-near-black text-sm">📷 Changer la photo</span>
+                                <span className="text-near-black text-sm">
+                                    {profile?.avatar_url ? 'Changer la photo' : 'Ajouter une photo'}
+                                </span>
                                 <input
                                     type="file"
                                     accept="image/*"
@@ -232,7 +234,7 @@ export default function Profile() {
                                     onClick={handleRemoveAvatar}
                                     className="flex items-center gap-3 px-4 py-3 w-full text-left hover:bg-light-bg border-t border-border"
                                 >
-                                    <span className="text-red-500 text-sm">🗑 Supprimer la photo</span>
+                                    <span className="text-red-500 text-sm">Supprimer la photo</span>
                                 </button>
                             )}
                             <button
