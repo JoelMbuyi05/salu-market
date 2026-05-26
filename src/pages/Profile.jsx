@@ -185,9 +185,9 @@ export default function Profile() {
                         )}
                     </div>
 
-                    {/* change photo button */}
-                    <label className="absolute bottom-0 right-0 bg-primary rounded-full w-5 h-5 flex items-center justify-center cursor-pointer">
-                        <span className="text-white text-xs">+</span>
+                    {/* the + button opens a small menu */}
+                    <label className="absolute bottom-0 right-0 bg-primary rounded-full w-6 h-6 flex items-center justify-center cursor-pointer shadow-md">
+                        <span className="text-white text-sm font-bold leading-none">+</span>
                         <input
                             type="file"
                             accept="image/*"
@@ -197,21 +197,20 @@ export default function Profile() {
                     </label>
                 </div>
 
-                {/* remove photo button — only show if has avatar */}
-                {profile?.avatar_url && (
-                    <button
-                        onClick={handleRemoveAvatar}
-                        className="text-red-400 text-xs mt-1"
-                    >
-                        Supprimer la photo
-                    </button>
-                )}
                 <div>
                     <p className="text-near-black font-bold text-base">
                         {profile?.full_name || 'Vendeur'}
                     </p>
                     <p className="text-muted text-sm">{profile?.phone}</p>
                     <p className="text-muted text-sm">{profile?.quartier}</p>
+                    {profile?.avatar_url && (
+                        <button
+                            onClick={handleRemoveAvatar}
+                            className="text-muted text-xs mt-1 underline"
+                        >
+                            Supprimer la photo
+                        </button>
+                    )}
                 </div>
             </div>
 
