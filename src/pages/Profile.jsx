@@ -16,6 +16,7 @@ export default function Profile() {
     const [loading, setLoading] = useState(true)
     const [activeTab, setActiveTab] = useState('listings')
     const [isAdmin, setIsAdmin] = useState(false)
+    const [showAvatarMenu, setShowAvatarMenu] = useState(false)
 
     async function fetchProfile() {
         const { data } = await supabase
@@ -66,15 +67,29 @@ export default function Profile() {
     async function handleAvatarUpload(e) {
         const file = e.target.files[0]
         if (!file) return
-        const fileName = `${user.id}/avatar.jpg`
+        setShowAvatarMenu(false)
+
+        const fileName = `${user.id}/avatar_${Date.now()}.jpg`
+
+        // delete old avatar files first
+        const { data: existingFiles } = await supabase.storage
+            .from('avatars')
+            .list(user.id)
+
+        if (existingFiles && existingFiles.length > 0) {
+            const filesToDelete = existingFiles.map(f => `${user.id}/${f.name}`)
+            await supabase.storage.from('avatars').remove(filesToDelete)
+        }
+
+        // upload new one with unique name
         await supabase.storage
             .from('avatars')
-            .upload(fileName, file, { upsert: true, contentType: 'image/jpeg' })
+            .upload(fileName, file, { contentType: 'image/jpeg' })
+
         const { data } = supabase.storage
             .from('avatars')
             .getPublicUrl(fileName)
 
-        // add timestamp to bust browser cache
         const urlWithTimestamp = `${data.publicUrl}?t=${Date.now()}`
 
         await supabase
@@ -86,14 +101,18 @@ export default function Profile() {
     }
 
     async function handleRemoveAvatar() {
+        setShowAvatarMenu(false)
         if (!window.confirm('Supprimer votre photo de profil ?')) return
 
-        // delete from storage
-        await supabase.storage
+        const { data: existingFiles } = await supabase.storage
             .from('avatars')
-            .remove([`${user.id}/avatar.jpg`])
+            .list(user.id)
 
-        // set avatar_url to null in users table
+        if (existingFiles && existingFiles.length > 0) {
+            const filesToDelete = existingFiles.map(f => `${user.id}/${f.name}`)
+            await supabase.storage.from('avatars').remove(filesToDelete)
+        }
+
         await supabase
             .from('users')
             .update({ avatar_url: null })
@@ -171,7 +190,10 @@ export default function Profile() {
             {/* Profile card */}
             <div className="bg-white mx-4 mt-4 rounded-2xl p-4 flex items-center gap-4">
                 <div className="relative">
-                    <div className="w-16 h-16 rounded-full overflow-hidden bg-badge-bg flex items-center justify-center flex-shrink-0">
+                    <div
+                        className="w-16 h-16 rounded-full overflow-hidden bg-badge-bg flex items-center justify-center flex-shrink-0 cursor-pointer"
+                        onClick={() => setShowAvatarMenu(!showAvatarMenu)}
+                    >
                         {profile?.avatar_url ? (
                             <img
                                 src={profile.avatar_url}
@@ -185,31 +207,41 @@ export default function Profile() {
                         )}
                     </div>
 
-                    {/* the + button opens a small menu */}
-                    <label className="absolute bottom-0 right-0 bg-primary rounded-full w-6 h-6 flex items-center justify-center cursor-pointer shadow-md">
+                    {/* + button */}
+                    <button
+                        onClick={() => setShowAvatarMenu(!showAvatarMenu)}
+                        className="absolute bottom-0 right-0 bg-primary rounded-full w-6 h-6 flex items-center justify-center shadow-md"
+                    >
                         <span className="text-white text-sm font-bold leading-none">+</span>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleAvatarUpload}
-                            className="hidden"
-                        />
-                    </label>
-                </div>
+                    </button>
 
-                <div>
-                    <p className="text-near-black font-bold text-base">
-                        {profile?.full_name || 'Vendeur'}
-                    </p>
-                    <p className="text-muted text-sm">{profile?.phone}</p>
-                    <p className="text-muted text-sm">{profile?.quartier}</p>
-                    {profile?.avatar_url && (
-                        <button
-                            onClick={handleRemoveAvatar}
-                            className="text-muted text-xs mt-1 underline"
-                        >
-                            Supprimer la photo
-                        </button>
+                    {/* dropdown menu */}
+                    {showAvatarMenu && (
+                        <div className="absolute top-20 left-0 bg-white rounded-2xl shadow-xl border border-border z-20 w-48 overflow-hidden">
+                            <label className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-light-bg">
+                                <span className="text-near-black text-sm">📷 Changer la photo</span>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleAvatarUpload}
+                                    className="hidden"
+                                />
+                            </label>
+                            {profile?.avatar_url && (
+                                <button
+                                    onClick={handleRemoveAvatar}
+                                    className="flex items-center gap-3 px-4 py-3 w-full text-left hover:bg-light-bg border-t border-border"
+                                >
+                                    <span className="text-red-500 text-sm">🗑 Supprimer la photo</span>
+                                </button>
+                            )}
+                            <button
+                                onClick={() => setShowAvatarMenu(false)}
+                                className="flex items-center gap-3 px-4 py-3 w-full text-left hover:bg-light-bg border-t border-border"
+                            >
+                                <span className="text-muted text-sm">✕ Annuler</span>
+                            </button>
+                        </div>
                     )}
                 </div>
             </div>

@@ -60,9 +60,17 @@ export default function Login() {
                     </div>
 
                     <div className="flex flex-col gap-1.5">
-                        <label className="text-near-black text-sm font-medium">
-                            {t('auth.password')}
-                        </label>
+                        <div className="flex items-center justify-between">
+                            <label className="text-near-black text-sm font-medium">
+                                {t('auth.password')}
+                            </label>
+                            <Link
+                                to="/forgot-password"
+                                className="text-primary text-xs font-medium"
+                            >
+                                Mot de passe oublié ?
+                            </Link>
+                        </div>
                         <div className="relative">
                             <input
                                 type={showPassword ? 'text' : 'password'}
@@ -71,17 +79,6 @@ export default function Login() {
                                 className="bg-light-bg rounded-xl px-4 py-3 text-near-black text-sm outline-none focus:ring-2 focus:ring-primary w-full pr-12"
                                 placeholder="••••••••"
                             />
-                            <div className="flex items-center justify-between">
-                                <label className="text-near-black text-sm font-medium">
-                                    {t('auth.password')}
-                                </label>
-                                <Link
-                                    to="/forgot-password"
-                                    className="text-primary text-xs font-medium"
-                                >
-                                    Mot de passe oublié ?
-                                </Link>
-                            </div>
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
