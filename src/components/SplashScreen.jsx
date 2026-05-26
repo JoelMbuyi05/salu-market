@@ -3,20 +3,27 @@ import { useState, useEffect } from 'react'
 export default function SplashScreen({ onFinish }) {
     const [visible, setVisible] = useState(true)
     const [fadeOut, setFadeOut] = useState(false)
+    const [scaleIn, setScaleIn] = useState(false)
 
     useEffect(() => {
-        // start fade out after 1.5 seconds
+        // trigger scale in animation immediately
+        const scaleTimer = setTimeout(() => {
+            setScaleIn(true)
+        }, 100)
+
+        // start fade out after 1.8 seconds
         const fadeTimer = setTimeout(() => {
             setFadeOut(true)
-        }, 1500)
+        }, 1800)
 
-        // remove completely after fade animation (0.5s)
+        // remove completely after fade animation
         const removeTimer = setTimeout(() => {
             setVisible(false)
             onFinish()
-        }, 2000)
+        }, 2300)
 
         return () => {
+            clearTimeout(scaleTimer)
             clearTimeout(fadeTimer)
             clearTimeout(removeTimer)
         }
@@ -31,34 +38,48 @@ export default function SplashScreen({ onFinish }) {
             }`}
             style={{ backgroundColor: '#1a6b3c' }}
         >
-            {/* logo */}
-            <div className={`flex flex-col items-center gap-4 transition-transform duration-500 ${
-                fadeOut ? 'scale-95' : 'scale-100'
-            }`}>
+            {/* logo + name */}
+            <div
+                className="flex flex-col items-center gap-4"
+                style={{
+                    transform: scaleIn ? 'scale(1)' : 'scale(0.7)',
+                    opacity: scaleIn ? 1 : 0,
+                    transition: 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease'
+                }}
+            >
                 <img
                     src="/icon-512.png"
                     alt="Salu Market"
                     className="w-24 h-24 rounded-2xl shadow-2xl"
-                    style={{
-                        animation: 'pulse 1.5s ease-in-out'
-                    }}
                 />
-                <div className="text-center">
-                    <h1 className="text-white text-3xl font-bold">Salu Market</h1>
-                    <p className="text-green-300 text-sm mt-1">
-                        Achète, vends. Simplement en un clic.
-                    </p>
-                </div>
+                <h1
+                    className="text-white font-bold"
+                    style={{ fontSize: '28px', letterSpacing: '0.5px' }}
+                >
+                    Salu Market
+                </h1>
             </div>
 
-            {/* loading dots at bottom */}
-            <div className="absolute bottom-16 flex gap-2">
-                <div className="w-2 h-2 bg-white rounded-full opacity-60"
-                    style={{ animation: 'bounce 1s infinite' }} />
-                <div className="w-2 h-2 bg-white rounded-full opacity-60"
-                    style={{ animation: 'bounce 1s infinite 0.2s' }} />
-                <div className="w-2 h-2 bg-white rounded-full opacity-60"
-                    style={{ animation: 'bounce 1s infinite 0.4s' }} />
+            {/* loading dots */}
+            <div
+                className="absolute bottom-16 flex gap-2"
+                style={{
+                    opacity: scaleIn ? 1 : 0,
+                    transition: 'opacity 0.4s ease 0.4s'
+                }}
+            >
+                <div
+                    className="w-2 h-2 bg-white rounded-full"
+                    style={{ animation: 'bounce 1s infinite', opacity: 0.6 }}
+                />
+                <div
+                    className="w-2 h-2 bg-white rounded-full"
+                    style={{ animation: 'bounce 1s infinite 0.2s', opacity: 0.6 }}
+                />
+                <div
+                    className="w-2 h-2 bg-white rounded-full"
+                    style={{ animation: 'bounce 1s infinite 0.4s', opacity: 0.6 }}
+                />
             </div>
         </div>
     )
