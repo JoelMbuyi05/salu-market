@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react'
 
 export default function SplashScreen({ onFinish }) {
+    const isAndroid = /Android/i.test(navigator.userAgent)
+
     const [visible, setVisible] = useState(true)
     const [fadeOut, setFadeOut] = useState(false)
     const [scaleIn, setScaleIn] = useState(false)
 
     useEffect(() => {
+        if (isAndroid) {
+            onFinish()
+            return
+        }
         // trigger scale in animation immediately
         const scaleTimer = setTimeout(() => {
             setScaleIn(true)
