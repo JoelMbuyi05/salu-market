@@ -128,7 +128,7 @@ export default function Home() {
                 <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                         <img
-                            src="/icon-192.png"
+                            src="/icon-512.png"
                             alt="Salu"
                             className="h-8 w-8 rounded-lg"
                         />
