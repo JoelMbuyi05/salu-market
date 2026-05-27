@@ -8,7 +8,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'inline',
-      includeAssets: ['favicon.png', 'icon-192.png', 'icon-512.png'],
+      includeAssets: ['favicon.png', 'icon-512.png'],
       manifest: {
         name: 'Salu Market',
         short_name: 'Salu',
@@ -21,18 +21,13 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: 'icon-192.png',
-            sizes: '192x192',
+            src: 'icon-512.png',
+            sizes: '1254x1254',
             type: 'image/png'
           },
           {
             src: 'icon-512.png',
-            sizes: '512x512',
-            type: 'image/png'
-          },
-          {
-            src: 'icon-512.png',
-            sizes: '512x512',
+            sizes: '1254x1254',
             type: 'image/png',
             purpose: 'maskable'
           }
