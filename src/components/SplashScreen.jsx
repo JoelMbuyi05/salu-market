@@ -60,27 +60,7 @@ export default function SplashScreen({ onFinish }) {
                 </h1>
             </div>
 
-            {/* loading dots */}
-            <div
-                className="absolute bottom-16 flex gap-2"
-                style={{
-                    opacity: scaleIn ? 1 : 0,
-                    transition: 'opacity 0.4s ease 0.4s'
-                }}
-            >
-                <div
-                    className="w-2 h-2 bg-white rounded-full"
-                    style={{ animation: 'bounce 1s infinite', opacity: 0.6 }}
-                />
-                <div
-                    className="w-2 h-2 bg-white rounded-full"
-                    style={{ animation: 'bounce 1s infinite 0.2s', opacity: 0.6 }}
-                />
-                <div
-                    className="w-2 h-2 bg-white rounded-full"
-                    style={{ animation: 'bounce 1s infinite 0.4s', opacity: 0.6 }}
-                />
-            </div>
+            
         </div>
     )
 }
