@@ -12,6 +12,7 @@ import IOSInstallBanner from './components/IOSInstallerBanner'
 import SplashScreen from './components/SplashScreen'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
+import EditListing from './pages/EditListing'
 
 function ProtectedRoute({ children }) {
     const { user, loading } = useAuth()
@@ -52,6 +53,11 @@ export default function App() {
                     <Route path="/admin" element={
                         <ProtectedRoute>
                             <Admin />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/edit/:id" element={
+                        <ProtectedRoute>
+                            <EditListing />
                         </ProtectedRoute>
                     } />
                     <Route path="/forgot-password" element={<ForgotPassword />} />

@@ -71,7 +71,6 @@ export default function Profile() {
 
         const fileName = `${user.id}/avatar_${Date.now()}.jpg`
 
-        // delete old avatar files first
         const { data: existingFiles } = await supabase.storage
             .from('avatars')
             .list(user.id)
@@ -81,7 +80,6 @@ export default function Profile() {
             await supabase.storage.from('avatars').remove(filesToDelete)
         }
 
-        // upload new one with unique name
         await supabase.storage
             .from('avatars')
             .upload(fileName, file, { contentType: 'image/jpeg' })
@@ -189,9 +187,11 @@ export default function Profile() {
 
             {/* Profile card */}
             <div className="bg-white mx-4 mt-4 rounded-2xl p-4 flex items-center gap-4">
-                <div className="relative">
+
+                {/* Avatar */}
+                <div className="relative flex-shrink-0">
                     <div
-                        className="w-16 h-16 rounded-full overflow-hidden bg-badge-bg flex items-center justify-center flex-shrink-0 cursor-pointer"
+                        className="w-16 h-16 rounded-full overflow-hidden bg-badge-bg flex items-center justify-center cursor-pointer"
                         onClick={() => setShowAvatarMenu(!showAvatarMenu)}
                     >
                         {profile?.avatar_url ? (
@@ -207,7 +207,6 @@ export default function Profile() {
                         )}
                     </div>
 
-                    {/* + button */}
                     <button
                         onClick={() => setShowAvatarMenu(!showAvatarMenu)}
                         className="absolute bottom-0 right-0 bg-primary rounded-full w-6 h-6 flex items-center justify-center shadow-md"
@@ -215,12 +214,11 @@ export default function Profile() {
                         <span className="text-white text-sm font-bold leading-none">+</span>
                     </button>
 
-                    {/* dropdown menu */}
                     {showAvatarMenu && (
-                        <div className="absolute top-20 left-0 bg-white rounded-2xl shadow-xl border border-border z-20 w-48 overflow-hidden">
+                        <div className="absolute top-20 left-0 bg-white rounded-2xl shadow-xl border border-border z-20 w-52 overflow-hidden">
                             <label className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-light-bg">
                                 <span className="text-near-black text-sm">
-                                    {profile?.avatar_url ? 'Changer la photo' : 'Ajouter une photo'}
+                                    📷 {profile?.avatar_url ? 'Changer la photo' : 'Mettre une photo de profil'}
                                 </span>
                                 <input
                                     type="file"
@@ -234,7 +232,7 @@ export default function Profile() {
                                     onClick={handleRemoveAvatar}
                                     className="flex items-center gap-3 px-4 py-3 w-full text-left hover:bg-light-bg border-t border-border"
                                 >
-                                    <span className="text-red-500 text-sm">Supprimer la photo</span>
+                                    <span className="text-red-500 text-sm">🗑 Supprimer la photo</span>
                                 </button>
                             )}
                             <button
@@ -245,6 +243,15 @@ export default function Profile() {
                             </button>
                         </div>
                     )}
+                </div>
+
+                {/* Name + phone */}
+                <div>
+                    <p className="text-near-black font-bold text-base">
+                        {profile?.full_name || 'Vendeur'}
+                    </p>
+                    <p className="text-muted text-sm">{profile?.phone}</p>
+                    <p className="text-muted text-sm">{profile?.quartier}</p>
                 </div>
             </div>
 
@@ -312,20 +319,29 @@ export default function Profile() {
                             {listings.map(listing => (
                                 <div key={listing.id} className="flex flex-col gap-2">
                                     <ListingCard listing={listing} />
+
                                     {listing.is_sold && (
                                         <span className="bg-badge-bg text-badge-text text-xs font-semibold px-2 py-1 rounded-full text-center">
                                             {t('listing.sold')}
                                         </span>
                                     )}
+
                                     <p className="text-muted text-xs text-center">
                                         👁 {listing.view_count || 0} vues
                                     </p>
-                                    <div className="flex gap-2">
+
+                                    <div className="flex gap-1">
                                         <button
-                                            onClick={() => handleMarkSold(listing.id, listing.is_sold)}
+                                            onClick={() => navigate(`/edit/${listing.id}`)}
                                             className="flex-1 text-xs py-1.5 rounded-lg border border-primary text-primary font-medium"
                                         >
-                                            {listing.is_sold ? 'Remettre en vente' : t('listing.mark_sold')}
+                                            {t('listing.edit')}
+                                        </button>
+                                        <button
+                                            onClick={() => handleMarkSold(listing.id, listing.is_sold)}
+                                            className="flex-1 text-xs py-1.5 rounded-lg border border-muted text-muted font-medium"
+                                        >
+                                            {listing.is_sold ? 'Remettre' : t('listing.mark_sold')}
                                         </button>
                                         <button
                                             onClick={() => handleDelete(listing.id)}
