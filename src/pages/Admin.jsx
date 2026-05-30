@@ -12,6 +12,7 @@ export default function Admin() {
     const [flaggedListings, setFlaggedListings] = useState([])
     const [reports, setReports] = useState([])
     const [allListings, setAllListings] = useState([])
+    const [allUsers, setAllUsers] = useState([])
     const [stats, setStats] = useState({})
     const [loading, setLoading] = useState(true)
 
@@ -31,7 +32,7 @@ export default function Admin() {
     }
 
     async function fetchData() {
-        // fetch flagged listings
+        // flagged listings
         const { data: flagged } = await supabase
             .from('listings')
             .select(`
@@ -42,10 +43,9 @@ export default function Admin() {
             `)
             .eq('is_flagged', true)
             .order('created_at', { ascending: false })
-
         setFlaggedListings(flagged || [])
 
-        // fetch all reports
+        // reports
         const { data: allReports } = await supabase
             .from('reports')
             .select(`
@@ -54,17 +54,22 @@ export default function Admin() {
                 users (full_name)
             `)
             .order('created_at', { ascending: false })
-
         setReports(allReports || [])
 
-        // fetch all listings for overview
+        // all listings
         const { data: listings } = await supabase
             .from('listings')
             .select('id, title, price, is_sold, is_flagged, view_count, created_at')
             .order('created_at', { ascending: false })
             .limit(50)
-
         setAllListings(listings || [])
+
+        // all users
+        const { data: users } = await supabase
+            .from('users')
+            .select('id, full_name, phone, quartier, created_at, is_admin')
+            .order('created_at', { ascending: false })
+        setAllUsers(users || [])
 
         // stats
         const { count: totalUsers } = await supabase
@@ -85,13 +90,7 @@ export default function Admin() {
             .select('*', { count: 'exact', head: true })
             .eq('is_flagged', true)
 
-        setStats({
-            totalUsers,
-            totalListings,
-            soldListings,
-            flaggedCount
-        })
-
+        setStats({ totalUsers, totalListings, soldListings, flaggedCount })
         setLoading(false)
     }
 
@@ -108,6 +107,47 @@ export default function Admin() {
             .update({ is_flagged: false })
             .eq('id', listingId)
         setFlaggedListings(prev => prev.filter(l => l.id !== listingId))
+    }
+
+    async function handleBanUser(userId) {
+        if (!window.confirm('Bannir cet utilisateur ? Il ne pourra plus se connecter.')) return
+
+        // ban in auth.users via SQL function
+        const { error } = await supabase.rpc('ban_user', { target_user_id: userId })
+
+        if (error) {
+            // fallback — update banned_until directly
+            await supabase
+                .from('users')
+                .update({ is_banned: true })
+                .eq('id', userId)
+        }
+
+        setAllUsers(prev =>
+            prev.map(u => u.id === userId ? { ...u, is_banned: true } : u)
+        )
+        alert('Utilisateur banni avec succès.')
+    }
+
+    async function handleUnbanUser(userId) {
+        await supabase.rpc('unban_user', { target_user_id: userId })
+        setAllUsers(prev =>
+            prev.map(u => u.id === userId ? { ...u, is_banned: false } : u)
+        )
+        alert('Utilisateur débanni.')
+    }
+
+    async function handleDeleteUser(userId) {
+        if (!window.confirm('Supprimer cet utilisateur complètement ? Cette action est irréversible.')) return
+
+        // delete their listings first
+        await supabase.from('listings').delete().eq('user_id', userId)
+
+        // delete their profile
+        await supabase.from('users').delete().eq('id', userId)
+
+        setAllUsers(prev => prev.filter(u => u.id !== userId))
+        alert('Utilisateur supprimé. Il peut se réinscrire avec le même email.')
     }
 
     useEffect(() => {
@@ -130,12 +170,7 @@ export default function Admin() {
             {/* Header */}
             <div className="bg-primary px-4 py-3 flex items-center justify-between sticky top-0 z-10">
                 <div className="flex items-center gap-3">
-                    <button
-                        onClick={() => navigate('/')}
-                        className="text-white text-xl"
-                    >
-                        ←
-                    </button>
+                    <button onClick={() => navigate('/')} className="text-white text-xl">←</button>
                     <h1 className="text-white font-bold text-lg">Admin</h1>
                 </div>
             </div>
@@ -161,37 +196,25 @@ export default function Admin() {
             </div>
 
             {/* Tabs */}
-            <div className="flex border-b border-border mx-4 bg-white rounded-t-2xl">
-                <button
-                    onClick={() => setActiveTab('flagged')}
-                    className={`flex-1 py-3 text-sm font-semibold ${
-                        activeTab === 'flagged'
-                            ? 'text-primary border-b-2 border-primary'
-                            : 'text-muted'
-                    }`}
-                >
-                    🚩 Signalés ({flaggedListings.length})
-                </button>
-                <button
-                    onClick={() => setActiveTab('reports')}
-                    className={`flex-1 py-3 text-sm font-semibold ${
-                        activeTab === 'reports'
-                            ? 'text-primary border-b-2 border-primary'
-                            : 'text-muted'
-                    }`}
-                >
-                    📋 Rapports ({reports.length})
-                </button>
-                <button
-                    onClick={() => setActiveTab('all')}
-                    className={`flex-1 py-3 text-sm font-semibold ${
-                        activeTab === 'all'
-                            ? 'text-primary border-b-2 border-primary'
-                            : 'text-muted'
-                    }`}
-                >
-                    📦 Tout
-                </button>
+            <div className="flex border-b border-border mx-4 bg-white rounded-t-2xl overflow-x-auto">
+                {[
+                    { key: 'flagged', label: `🚩 Signalés (${flaggedListings.length})` },
+                    { key: 'reports', label: `📋 Rapports (${reports.length})` },
+                    { key: 'all', label: `📦 Annonces` },
+                    { key: 'users', label: `👥 Utilisateurs (${allUsers.length})` },
+                ].map(tab => (
+                    <button
+                        key={tab.key}
+                        onClick={() => setActiveTab(tab.key)}
+                        className={`flex-shrink-0 px-3 py-3 text-xs font-semibold ${
+                            activeTab === tab.key
+                                ? 'text-primary border-b-2 border-primary'
+                                : 'text-muted'
+                        }`}
+                    >
+                        {tab.label}
+                    </button>
+                ))}
             </div>
 
             <div className="px-4 mt-3 flex flex-col gap-3">
@@ -291,6 +314,76 @@ export default function Admin() {
                                 >
                                     🗑
                                 </button>
+                            </div>
+                        ))}
+                    </>
+                )}
+
+                {/* Users tab */}
+                {activeTab === 'users' && (
+                    <>
+                        {allUsers.length === 0 && (
+                            <div className="text-center py-12">
+                                <p className="text-muted">Aucun utilisateur</p>
+                            </div>
+                        )}
+                        {allUsers.map(u => (
+                            <div key={u.id} className="bg-white rounded-2xl p-4 flex flex-col gap-3">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full bg-badge-bg flex items-center justify-center flex-shrink-0">
+                                        <span className="text-primary font-bold">
+                                            {u.full_name?.[0]?.toUpperCase() || '?'}
+                                        </span>
+                                    </div>
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-2">
+                                            <p className="text-near-black font-semibold text-sm">
+                                                {u.full_name || 'Sans nom'}
+                                            </p>
+                                            {u.is_admin && (
+                                                <span className="bg-primary text-white text-xs px-2 py-0.5 rounded-full">
+                                                    Admin
+                                                </span>
+                                            )}
+                                            {u.is_banned && (
+                                                <span className="bg-red-100 text-red-500 text-xs px-2 py-0.5 rounded-full">
+                                                    Banni
+                                                </span>
+                                            )}
+                                        </div>
+                                        <p className="text-muted text-xs">{u.phone}</p>
+                                        <p className="text-muted text-xs">
+                                            Inscrit le {new Date(u.created_at).toLocaleDateString('fr-FR')}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* action buttons — don't show for yourself */}
+                                {u.id !== user.id && !u.is_admin && (
+                                    <div className="flex gap-2">
+                                        {u.is_banned ? (
+                                            <button
+                                                onClick={() => handleUnbanUser(u.id)}
+                                                className="flex-1 py-2 rounded-xl border border-primary text-primary text-xs font-semibold"
+                                            >
+                                                ✓ Débannir
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={() => handleBanUser(u.id)}
+                                                className="flex-1 py-2 rounded-xl border border-orange-400 text-orange-400 text-xs font-semibold"
+                                            >
+                                                🚫 Bannir
+                                            </button>
+                                        )}
+                                        <button
+                                            onClick={() => handleDeleteUser(u.id)}
+                                            className="flex-1 py-2 rounded-xl bg-red-500 text-white text-xs font-semibold"
+                                        >
+                                            🗑 Supprimer
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </>
