@@ -8,11 +8,12 @@ import ListingDetail from './pages/ListingDetail'
 import PostListing from './pages/PostListing'
 import Profile from './pages/Profile'
 import Admin from './pages/Admin'
-import IOSInstallBanner from './components/IOSInstallerBanner'
-import SplashScreen from './components/SplashScreen'
+import EditListing from './pages/EditListing'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
-import EditListing from './pages/EditListing'
+import IOSInstallBanner from './components/IOSInstallBanner'
+import SplashScreen from './components/SplashScreen'
+import CookieBanner from './components/CookieBanner'
 
 function ProtectedRoute({ children }) {
     const { user, loading } = useAuth()
@@ -32,17 +33,24 @@ export default function App() {
             {showSplash && (
                 <SplashScreen onFinish={() => setShowSplash(false)} />
             )}
-
+            <CookieBanner />
             <BrowserRouter>
                 <IOSInstallBanner />
                 <Routes>
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
                     <Route path="/" element={<Home />} />
                     <Route path="/listing/:id" element={<ListingDetail />} />
                     <Route path="/post" element={
                         <ProtectedRoute>
                             <PostListing />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/edit/:id" element={
+                        <ProtectedRoute>
+                            <EditListing />
                         </ProtectedRoute>
                     } />
                     <Route path="/profile" element={
@@ -55,13 +63,6 @@ export default function App() {
                             <Admin />
                         </ProtectedRoute>
                     } />
-                    <Route path="/edit/:id" element={
-                        <ProtectedRoute>
-                            <EditListing />
-                        </ProtectedRoute>
-                    } />
-                    <Route path="/forgot-password" element={<ForgotPassword />} />
-                    <Route path="/reset-password" element={<ResetPassword />} />
                 </Routes>
             </BrowserRouter>
         </>

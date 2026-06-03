@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { translateAuthError } from '../lib/authErrors'
+import { trackLogin } from '../lib/analytics'
 
 export default function Login() {
     const { t, i18n } = useTranslation()
@@ -23,6 +24,7 @@ export default function Login() {
         } else {
             navigate('/')
         }
+        trackLogin()
         setLoading(false)
     }
 

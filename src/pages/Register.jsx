@@ -3,9 +3,10 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { translateAuthError } from '../lib/authErrors'
+import { trackRegister } from '../lib/analytics'
 
 export default function Register() {
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation()
     const navigate = useNavigate()
 
     const [fullName, setFullName] = useState('')
@@ -21,7 +22,7 @@ export default function Register() {
         setError('')
         const { data, error } = await supabase.auth.signUp({ email, password })
         if (error) {
-            setError(translateAuthError(error.message))
+            setError(translateAuthError(error.message, i18n.language))
             setLoading(false)
             return
         }
@@ -38,6 +39,7 @@ export default function Register() {
             return
         }
         navigate('/')
+        trackRegister()
         setLoading(false)
     }
 

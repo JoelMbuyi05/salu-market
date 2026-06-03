@@ -7,6 +7,7 @@ import { useDebounce } from '../hooks/useDebounce'
 import { useTranslation } from 'react-i18next'
 import SkeletonCard from '../components/SkeletonCard'
 import { useAuth } from '../store/authContext'
+import { trackSearch } from '../lib/analytics'
 
 const PAGE_SIZE = 20
 
@@ -77,6 +78,9 @@ export default function Home() {
 
     useEffect(() => {
         const timer = setTimeout(() => {
+            if (debouncedSearch.trim()) {
+                trackSearch(debouncedSearch)
+            }
             setPage(0)
             setHasMore(true)
             setListings([])

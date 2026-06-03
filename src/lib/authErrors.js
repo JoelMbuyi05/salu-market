@@ -11,6 +11,10 @@ export function translateAuthError(message, language = 'fr') {
             'signup_disabled': 'Les inscriptions sont désactivées',
             'User not found': 'Utilisateur introuvable',
             'Password is too short': 'Le mot de passe est trop court',
+            'Load failed': 'Connexion impossible. Vérifiez votre internet.',
+            'Failed to fetch': 'Connexion impossible. Vérifiez votre internet.',
+            'NetworkError': 'Erreur réseau. Vérifiez votre connexion.',
+            'fetch failed': 'Connexion impossible. Vérifiez votre internet.',
         },
         en: {
             'Invalid login credentials': 'Incorrect email or password',
@@ -21,6 +25,10 @@ export function translateAuthError(message, language = 'fr') {
             'Email rate limit exceeded': 'Too many attempts, please try again later',
             'Anonymous sign-ins are disabled': 'Please fill in all fields',
             'Password is too short': 'Password is too short',
+            'Load failed': 'Connection failed. Check your internet.',
+            'Failed to fetch': 'Connection failed. Check your internet.',
+            'NetworkError': 'Network error. Check your connection.',
+            'fetch failed': 'Connection failed. Check your internet.',
         }
     }
     return errors[language]?.[message] || message

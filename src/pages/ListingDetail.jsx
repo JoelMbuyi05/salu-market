@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../store/authContext'
+import { trackListingView, trackWhatsAppContact } from '../lib/analytics'
 
 export default function ListingDetail() {
     const { id } = useParams()
@@ -36,6 +37,7 @@ export default function ListingDetail() {
 
         data.listing_images.sort((a, b) => a.position - b.position)
         setListing(data)
+        trackListingView(data.id, data.title)
 
         const { data: sellerData } = await supabase
             .from('users')
@@ -305,15 +307,14 @@ export default function ListingDetail() {
                             href={buildWhatsAppLink()}
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={() => trackWhatsAppContact(listing.id)}
                             className="flex-1 flex items-center justify-center gap-2 bg-whatsapp text-white rounded-xl py-3 font-semibold"
                         >
-                            <span>📱</span>
                             <span>{t('listing.contact_seller')} via WhatsApp</span>
                         </a>
                     </>
                 ) : (
                     <div className="flex-1 flex items-center justify-center gap-2 bg-light-bg text-muted rounded-xl py-3 font-semibold">
-                        <span>✏️</span>
                         <span>Votre annonce</span>
                     </div>
                 )}

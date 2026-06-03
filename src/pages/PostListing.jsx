@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../store/authContext'
 import imageCompression from 'browser-image-compression'
+import { trackListingPost } from '../lib/analytics'
 
 const categories = [
     { slug: 'phones', labelKey: 'categories.phones' },
@@ -110,6 +111,7 @@ export default function PostListing() {
 
         setLoading(false)
         navigate('/')
+        trackListingPost(category)
     }
 
     return (
