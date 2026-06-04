@@ -11,7 +11,7 @@ import Admin from './pages/Admin'
 import EditListing from './pages/EditListing'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
-import IOSInstallBanner from './components/IOSInstallBanner'
+import IOSInstallBanner from './components/IOSInstallerBanner'
 import SplashScreen from './components/SplashScreen'
 import CookieBanner from './components/CookieBanner'
 

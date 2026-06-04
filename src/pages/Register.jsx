@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { translateAuthError } from '../lib/authErrors'
-import { trackRegister } from '../lib/analytics'
+import { trackSignUp } from '../lib/analytics'
 
 export default function Register() {
     const { t, i18n } = useTranslation()
@@ -39,7 +39,7 @@ export default function Register() {
             return
         }
         navigate('/')
-        trackRegister()
+        trackSignUp()
         setLoading(false)
     }
 
