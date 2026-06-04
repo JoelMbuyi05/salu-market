@@ -20,10 +20,7 @@ export default function ListingCard({ listing }) {
     const rawUrl = listing.listing_images?.[0]?.url || null
 
     // use supabase image transformation for smaller thumbnails
-    const imageUrl = rawUrl ? rawUrl.replace(
-        '/storage/v1/object/public/',
-        '/storage/v1/render/image/public/'
-    ) + '?width=400&quality=60' : null
+    const imageUrl = rawUrl || null
 
     useEffect(() => {
         if (!imageUrl) return
