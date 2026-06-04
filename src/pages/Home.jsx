@@ -122,7 +122,7 @@ export default function Home() {
     }, [])
 
     return (
-        <div>
+        <div classNamre="min-h-screen bg-light-bg overflow-x-hidden">
             {/* header — only this stays sticky */}
             <div className={`sticky top-0 z-20 px-4 py-3 transition-all duration-300 ${
                     scrolled
