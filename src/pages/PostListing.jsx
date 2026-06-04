@@ -42,9 +42,10 @@ export default function PostListing() {
     const filesToAdd = newFiles.slice(0, remaining)
     
     const options = {
-        maxSizeMB: 0.5,
-        maxWidthOrHeight: 1024,
-        useWebWorker: true
+        maxSizeMB: 0.3,
+        maxWidthOrHeight: 800,
+        useWebWorker: true,
+        initialQuality: 0.7
     }
     
     const compressed = await Promise.all(

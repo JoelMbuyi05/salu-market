@@ -13,7 +13,6 @@ import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import IOSInstallBanner from './components/IOSInstallerBanner'
 import SplashScreen from './components/SplashScreen'
-import CookieBanner from './components/CookieBanner'
 
 function ProtectedRoute({ children }) {
     const { user, loading } = useAuth()
@@ -33,7 +32,6 @@ export default function App() {
             {showSplash && (
                 <SplashScreen onFinish={() => setShowSplash(false)} />
             )}
-            <CookieBanner />
             <BrowserRouter>
                 <IOSInstallBanner />
                 <Routes>

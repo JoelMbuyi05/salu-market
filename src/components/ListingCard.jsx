@@ -1,6 +1,6 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-// calculates how long ago a listing was posted
 function timeAgo(dateString) {
     const now = new Date()
     const date = new Date(dateString)
@@ -14,38 +14,60 @@ function timeAgo(dateString) {
 
 export default function ListingCard({ listing }) {
     const navigate = useNavigate()
+    const [imageLoaded, setImageLoaded] = useState(false)
+    const [imageError, setImageError] = useState(false)
 
-    // get first image or fallback to placeholder
-    const imageUrl = listing.listing_images?.[0]?.url || 'https://placehold.co/400x300?text=Salu'
+    const rawUrl = listing.listing_images?.[0]?.url || null
+
+    // use supabase image transformation for smaller thumbnails
+    const imageUrl = rawUrl ? rawUrl.replace(
+        '/storage/v1/object/public/',
+        '/storage/v1/render/image/public/'
+    ) + '?width=400&quality=60' : null
+
+    useEffect(() => {
+        if (!imageUrl) return
+        const timeout = setTimeout(() => {
+            if (!imageLoaded) setImageError(true)
+        }, 8000)
+        return () => clearTimeout(timeout)
+    }, [imageUrl, imageLoaded])
 
     return (
         <div
             onClick={() => navigate(`/listing/${listing.id}`)}
             className="bg-white rounded-xl overflow-hidden border border-border cursor-pointer active:scale-95 transition-transform"
         >
-            {/* Image */}
-            <div className="h-40 w-full">
-                <img
-                    src={imageUrl}
-                    alt={listing.title}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                />
+            <div className="h-40 w-full bg-light-bg relative overflow-hidden">
+                {!imageLoaded && !imageError && (
+                    <div className="absolute inset-0 bg-light-bg animate-pulse" />
+                )}
+
+                {imageUrl && !imageError ? (
+                    <img
+                        src={imageUrl}
+                        alt={listing.title}
+                        className={`w-full h-full object-cover transition-opacity duration-300 ${
+                            imageLoaded ? 'opacity-100' : 'opacity-0'
+                        }`}
+                        loading="lazy"
+                        onLoad={() => setImageLoaded(true)}
+                        onError={() => setImageError(true)}
+                    />
+                ) : (
+                    <div className="w-full h-full bg-light-bg flex items-center justify-center">
+                        <span className="text-muted text-xs">Salu</span>
+                    </div>
+                )}
             </div>
 
-            {/* Info */}
             <div className="p-2 flex flex-col gap-1">
-                {/* Title — line-clamp-2 cuts off at 2 lines with "..." */}
                 <p className="text-sm font-semibold text-near-black line-clamp-2 leading-tight">
                     {listing.title}
                 </p>
-
-                {/* Price — toLocaleString adds commas: 850000 → 850,000 */}
                 <p className="text-primary font-bold text-sm">
                     {listing.price.toLocaleString()} FC
                 </p>
-
-                {/* Location + time on same line */}
                 <p className="text-muted text-xs">
                     {listing.quartier} · {timeAgo(listing.created_at)}
                 </p>
