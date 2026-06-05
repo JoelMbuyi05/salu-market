@@ -113,9 +113,7 @@ export default function Home() {
         const handleScroll = () => {
             setScrolled(window.scrollY > 10)
         }
-
         window.addEventListener('scroll', handleScroll)
-
         return () => { 
             window.removeEventListener('scroll', handleScroll)
         }
@@ -124,7 +122,11 @@ export default function Home() {
     return (
         <div className="min-h-screen bg-light-bg">
             {/* header */}
-            <div className="bg-primary sticky top-0 z-20 shadow-md">
+            <div className={`sticky top-0 z-20 transaction-all duration-300 ${
+                scrolled 
+                    ? 'bg-primary/70 backdrop-blur-xl border-b border-white/10'
+                    : 'bg-primary'
+            }`}>
                 <div className="desktop-header px-4 py-3">
                     <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
