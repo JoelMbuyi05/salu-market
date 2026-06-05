@@ -122,84 +122,88 @@ export default function Home() {
     }, [])
 
     return (
-        <div classNamre="min-h-screen bg-light-bg overflow-x-hidden">
-            {/* header — only this stays sticky */}
-            <div className={`sticky top-0 z-20 px-4 py-3 transition-all duration-300 ${
-                    scrolled
-                        ? 'bg-primary/70 backdrop-blur-xl border-b border-white/10'
-                        : 'bg-primary'
-                }`}>
-                <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                        <img
-                            src="/icon-512.png"
-                            alt="Salu"
-                            className="h-8 w-8 rounded-lg"
-                        />
-                        <span className="text-white font-bold text-lg">Salu Market</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        {user ? (
-                            <>
+        <div className="min-h-screen bg-light-bg">
+            {/* header */}
+            <div className="bg-primary sticky top-0 z-20 shadow-md">
+                <div className="desktop-header px-4 py-3">
+                    <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                            <img
+                                src="/icon-512.png"
+                                alt="Salu"
+                                className="h-8 w-8 rounded-lg"
+                            />
+                            <span className="text-white font-bold text-lg">Salu Market</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            {user ? (
+                                <>
+                                    <button
+                                        onClick={() => navigate('/profile')}
+                                        className="text-white text-sm opacity-80"
+                                    >
+                                        {t('nav.profile')}
+                                    </button>
+                                    <button
+                                        onClick={() => navigate('/post')}
+                                        className="bg-white text-primary text-sm font-semibold px-3 py-1 rounded-full"
+                                    >
+                                        + {t('listing.post_listing')}
+                                    </button>
+                                </>
+                            ) : (
                                 <button
-                                    onClick={() => navigate('/profile')}
-                                    className="text-white text-sm opacity-80"
-                                >
-                                    {t('nav.profile')}
-                                </button>
-                                <button
-                                    onClick={() => navigate('/post')}
+                                    onClick={() => navigate('/login')}
                                     className="bg-white text-primary text-sm font-semibold px-3 py-1 rounded-full"
                                 >
-                                    +
+                                    {t('auth.login')}
                                 </button>
-                            </>
-                        ) : (
+                            )}
+                        </div>
+                    </div>
+                    <div className="relative">
+                        <input
+                            type="text"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder={t('search.placeholder')}
+                            className="w-full bg-white rounded-full px-4 py-2 text-sm text-near-black outline-none pr-8"
+                        />
+                        {search && (
                             <button
-                                onClick={() => navigate('/login')}
-                                className="bg-white text-primary text-sm font-semibold px-3 py-1 rounded-full"
+                                onClick={() => setSearch('')}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted text-lg leading-none"
                             >
-                                {t('auth.login')}
+                                ×
                             </button>
                         )}
                     </div>
                 </div>
+            </div>
 
-                {/* search */}
-                <div className="relative">
-                    <input
-                        type="text"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder={t('search.placeholder')}
-                        className="w-full bg-white rounded-full px-4 py-2 text-sm text-near-black outline-none pr-8"
-                    />
-                    {search && (
-                        <button
-                            onClick={() => setSearch('')}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted text-lg leading-none"
-                        >
-                            ×
-                        </button>
-                    )}
+            {/* categories */}
+            <div className="bg-white border-b border-border">
+                <div className="desktop-header">
+                    <CategoryChips selected={category} onSelect={handleCategorySelect} />
                 </div>
             </div>
-            {/* not sticky, scrolls with page */}
-            <div className="bg-white border-b border-border">
-                <CategoryChips selected={category} onSelect={handleCategorySelect} />
-            </div>
 
-            <div className="p-3 grid grid-cols-2 gap-3">
-                {listings.map(listing => (
-                    <ListingCard key={listing.id} listing={listing} />
-                ))}
+            {/* grid */}
+            <div className="desktop-container">
+                <div className="p-3 grid grid-cols-2 desktop-grid gap-3">
+                    {listings.map(listing => (
+                        <ListingCard key={listing.id} listing={listing} />
+                    ))}
+                </div>
             </div>
 
             {loading && listings.length === 0 && (
-                <div className="p-3 grid grid-cols-2 gap-3">
-                    {Array.from({ length: 6 }).map((_, i) => (
-                        <SkeletonCard key={i} />
-                    ))}
+                <div className="desktop-container">
+                    <div className="p-3 grid grid-cols-2 desktop-grid gap-3">
+                        {Array.from({ length: 6 }).map((_, i) => (
+                            <SkeletonCard key={i} />
+                        ))}
+                    </div>
                 </div>
             )}
 
