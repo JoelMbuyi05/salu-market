@@ -9,6 +9,7 @@
 }
 body{
   background: #1a6b3c !important;
+  padding-top: env(safe-area-inset-top);
 }
 #root {
   width: 100%;

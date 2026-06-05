@@ -126,7 +126,9 @@ export default function Home() {
                 scrolled 
                     ? 'bg-primary/70 backdrop-blur-xl border-b border-white/10'
                     : 'bg-primary'
-            }`}>
+            }`}
+            style={{ paddingTop: 'env(safe-area-inset-top)' }}
+            >
                 <div className="desktop-header px-4 py-3">
                     <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
