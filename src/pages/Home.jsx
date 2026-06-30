@@ -37,27 +37,53 @@ async function fetchListings(pageNumber, setListings, setHasMore, setLoading, ca
     }
 
     const { data, error } = await query
-
-    if (error) {
-        console.error(error)
-        setLoading(false)
-        return
-    }
-
+    if (error) { console.error(error); setLoading(false); return }
     if (data.length < PAGE_SIZE) setHasMore(false)
     setListings(prev => pageNumber === 0 ? data : [...prev, ...data])
     setLoading(false)
 }
 
 const categoryIcons = [
-    { slug: 'all', label: 'Tout', emoji: '🛍️' },
-    { slug: 'food', label: 'Aliment.', emoji: '🍎' },
-    { slug: 'furniture', label: 'Maison', emoji: '🛋️' },
-    { slug: 'clothes', label: 'Mode', emoji: '👗' },
-    { slug: 'electronics', label: 'Electron.', emoji: '💻' },
-    { slug: 'phones', label: 'Téléphones', emoji: '📱' },
-    { slug: 'vehicles', label: 'Véhicules', emoji: '🚗' },
-    { slug: 'services', label: 'Services', emoji: '🔧' },
+    { slug: 'all', label: 'Tout', icon: (active) => (
+        <svg className={`w-6 h-6 ${active ? 'text-white' : 'text-muted'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+        </svg>
+    )},
+    { slug: 'food', label: 'Aliment.', icon: (active) => (
+        <svg className={`w-6 h-6 ${active ? 'text-white' : 'text-muted'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+    )},
+    { slug: 'furniture', label: 'Maison', icon: (active) => (
+        <svg className={`w-6 h-6 ${active ? 'text-white' : 'text-muted'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
+    )},
+    { slug: 'clothes', label: 'Mode', icon: (active) => (
+        <svg className={`w-6 h-6 ${active ? 'text-white' : 'text-muted'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M7 7l-4 4 4 4M17 7l4 4-4 4M14 3l-4 18" />
+        </svg>
+    )},
+    { slug: 'electronics', label: 'Electron.', icon: (active) => (
+        <svg className={`w-6 h-6 ${active ? 'text-white' : 'text-muted'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+    )},
+    { slug: 'phones', label: 'Téléphones', icon: (active) => (
+        <svg className={`w-6 h-6 ${active ? 'text-white' : 'text-muted'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+        </svg>
+    )},
+    { slug: 'vehicles', label: 'Véhicules', icon: (active) => (
+        <svg className={`w-6 h-6 ${active ? 'text-white' : 'text-muted'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10l2 1h8zM13 8h4l3 5v3h-7V8z" />
+        </svg>
+    )},
+    { slug: 'services', label: 'Services', icon: (active) => (
+        <svg className={`w-6 h-6 ${active ? 'text-white' : 'text-muted'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+    )},
 ]
 
 export default function Home() {
@@ -74,11 +100,11 @@ export default function Home() {
     const [search, setSearch] = useState('')
     const [scrolled, setScrolled] = useState(false)
     const [showSearch, setShowSearch] = useState(false)
+    const [showMenu, setShowMenu] = useState(false)
 
     const debouncedSearch = useDebounce(search, 500)
     const bottomRef = useRef(null)
 
-    // read category from URL params
     useEffect(() => {
         const params = new URLSearchParams(location.search)
         const cat = params.get('category')
@@ -143,7 +169,6 @@ export default function Home() {
             >
                 <div className="px-4 py-3">
                     {showSearch ? (
-                        // search mode
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={() => { setShowSearch(false); setSearch('') }}
@@ -161,36 +186,30 @@ export default function Home() {
                             />
                         </div>
                     ) : (
-                        // normal mode
                         <>
-                            <div className="flex items-center justify-between mb-1">
-                                {/* hamburger */}
-                                <button className="text-white p-1">
+                            <div className="flex items-center justify-between mb-2">
+                                {/* hamburger — mobile only */}
+                                <button
+                                    onClick={() => setShowMenu(true)}
+                                    className="text-white p-1 md:hidden"
+                                >
                                     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                                     </svg>
                                 </button>
 
-                                {/* logo + title center */}
+                                {/* logo + title */}
                                 <div className="flex items-center gap-2">
                                     <img src="/icon-512.png" alt="Salu" className="h-7 w-7 rounded-lg" />
                                     <span className="text-white font-bold text-lg">Salu Market</span>
                                 </div>
 
                                 {/* notification bell */}
-                                <button className="text-white p-1">
+                                <button className="text-white p-1 relative">
                                     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                                     </svg>
                                 </button>
-                            </div>
-
-                            {/* location */}
-                            <div className="flex items-center justify-center gap-1 mb-2">
-                                <svg className="w-3 h-3 text-accent" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                                </svg>
-                                <span className="text-accent text-xs font-medium">Mbuji-Mayi</span>
                             </div>
 
                             {/* search bar */}
@@ -208,72 +227,187 @@ export default function Home() {
                 </div>
             </div>
 
+            {/* Hamburger Menu Overlay — mobile only */}
+            {showMenu && (
+                <div className="fixed inset-0 z-50 md:hidden">
+                    {/* backdrop */}
+                    <div
+                        className="absolute inset-0 bg-black bg-opacity-50"
+                        onClick={() => setShowMenu(false)}
+                    />
+                    {/* drawer */}
+                    <div className="absolute left-0 top-0 bottom-0 w-72 bg-white flex flex-col">
+                        {/* drawer header */}
+                        <div className="bg-primary px-4 py-6 flex items-center gap-3">
+                            <img src="/icon-512.png" alt="Salu" className="h-10 w-10 rounded-xl" />
+                            <div>
+                                <p className="text-white font-bold text-lg">Salu Market</p>
+                                <p className="text-accent text-xs">Mbuji-Mayi, RDC</p>
+                            </div>
+                            <button
+                                onClick={() => setShowMenu(false)}
+                                className="ml-auto text-white opacity-70"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        {/* menu items */}
+                        <div className="flex flex-col flex-1 py-4">
+                            <button
+                                onClick={() => { navigate('/'); setShowMenu(false) }}
+                                className="flex items-center gap-3 px-6 py-4 hover:bg-light-bg text-left"
+                            >
+                                <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                </svg>
+                                <span className="text-near-black font-medium">Accueil</span>
+                            </button>
+
+                            <button
+                                onClick={() => { navigate('/categories'); setShowMenu(false) }}
+                                className="flex items-center gap-3 px-6 py-4 hover:bg-light-bg text-left"
+                            >
+                                <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                </svg>
+                                <span className="text-near-black font-medium">Catégories</span>
+                            </button>
+
+                            {user ? (
+                                <>
+                                    <button
+                                        onClick={() => { navigate('/profile'); setShowMenu(false) }}
+                                        className="flex items-center gap-3 px-6 py-4 hover:bg-light-bg text-left"
+                                    >
+                                        <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                        <span className="text-near-black font-medium">Mon Profil</span>
+                                    </button>
+
+                                    <button
+                                        onClick={() => { navigate('/post'); setShowMenu(false) }}
+                                        className="flex items-center gap-3 px-6 py-4 hover:bg-light-bg text-left"
+                                    >
+                                        <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                                        </svg>
+                                        <span className="text-near-black font-medium">Publier une annonce</span>
+                                    </button>
+                                </>
+                            ) : (
+                                <button
+                                    onClick={() => { navigate('/login'); setShowMenu(false) }}
+                                    className="flex items-center gap-3 px-6 py-4 hover:bg-light-bg text-left"
+                                >
+                                    <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                                    </svg>
+                                    <span className="text-near-black font-medium">Se connecter</span>
+                                </button>
+                            )}
+
+                            <div className="border-t border-border mt-2">
+                                <button
+                                    onClick={() => setShowMenu(false)}
+                                    className="flex items-center gap-3 px-6 py-4 hover:bg-light-bg text-left w-full"
+                                >
+                                    <svg className="w-5 h-5 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span className="text-muted font-medium">À propos de Salu Market</span>
+                                </button>
+
+                                <button
+                                    onClick={() => setShowMenu(false)}
+                                    className="flex items-center gap-3 px-6 py-4 hover:bg-light-bg text-left w-full"
+                                >
+                                    <svg className="w-5 h-5 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span className="text-muted font-medium">Aide & Support</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* version at bottom */}
+                        <div className="px-6 py-4 border-t border-border">
+                            <p className="text-muted text-xs">Salu Market v1.0 · Mbuji-Mayi, RDC</p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Hero Banner */}
             {!search && category === 'all' && (
                 <div className="mx-4 mt-4 rounded-2xl overflow-hidden bg-primary relative h-36">
-                    <div className="absolute inset-0 p-4 flex flex-col justify-center">
+                    <div className="absolute inset-0 p-5 flex flex-col justify-center">
                         <p className="text-white font-bold text-lg leading-tight">
                             Tout ce dont tu as besoin,{' '}
                             <span className="text-accent">tout près</span>{' '}
                             de chez toi.
                         </p>
-                        <p className="text-white/70 text-xs mt-1">
-                            Mbuji-Mayi · RDC
-                        </p>
+                        <button
+                            onClick={() => navigate('/post')}
+                            className="mt-3 bg-white text-primary text-xs font-bold px-4 py-2 rounded-full w-fit"
+                        >
+                            Publier une annonce →
+                        </button>
                     </div>
-                    {/* decorative circle */}
                     <div className="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full -translate-y-8 translate-x-8" />
                     <div className="absolute right-8 bottom-0 w-20 h-20 bg-white/10 rounded-full translate-y-6" />
                 </div>
             )}
 
-            {/* Category icons */}
+            {/* Category icons — SVG no emojis */}
             {!search && (
                 <div className="mt-4 px-4">
-                    <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1">
-                        {categoryIcons.map(cat => (
-                            <button
-                                key={cat.slug}
-                                onClick={() => handleCategorySelect(cat.slug)}
-                                className="flex flex-col items-center gap-1.5 flex-shrink-0"
-                            >
-                                <div className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl transition-all ${
-                                    category === cat.slug
-                                        ? 'bg-primary shadow-lg scale-110'
-                                        : 'bg-white shadow-sm'
-                                }`}>
-                                    {cat.emoji}
-                                </div>
-                                <span className={`text-xs font-medium ${
-                                    category === cat.slug ? 'text-primary' : 'text-muted'
-                                }`}>
-                                    {cat.label}
-                                </span>
-                            </button>
-                        ))}
+                    <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-1">
+                        {categoryIcons.map(cat => {
+                            const isActive = category === cat.slug
+                            return (
+                                <button
+                                    key={cat.slug}
+                                    onClick={() => handleCategorySelect(cat.slug)}
+                                    className="flex flex-col items-center gap-1.5 flex-shrink-0"
+                                >
+                                    <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${
+                                        isActive ? 'bg-primary shadow-lg' : 'bg-white shadow-sm'
+                                    }`}>
+                                        {cat.icon(isActive)}
+                                    </div>
+                                    <span className={`text-xs font-medium ${
+                                        isActive ? 'text-primary' : 'text-muted'
+                                    }`}>
+                                        {cat.label}
+                                    </span>
+                                </button>
+                            )
+                        })}
                     </div>
                 </div>
             )}
 
-            {/* Listings section */}
+            {/* Listings */}
             <div className="mt-4 px-4">
                 <div className="flex items-center justify-between mb-3">
                     <h2 className="text-near-black font-bold text-base">
                         {search ? `Résultats pour "${search}"` :
                          category === 'all' ? 'Annonces récentes' :
-                         `${categoryIcons.find(c => c.slug === category)?.label || category}`}
+                         categoryIcons.find(c => c.slug === category)?.label || category}
                     </h2>
                 </div>
 
                 {loading && listings.length === 0 && (
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                         {Array.from({ length: 6 }).map((_, i) => (
                             <SkeletonCard key={i} />
                         ))}
                     </div>
                 )}
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {listings.map(listing => (
                         <ListingCard key={listing.id} listing={listing} />
                     ))}
