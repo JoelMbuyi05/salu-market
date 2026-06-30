@@ -86,6 +86,23 @@ export default function ListingDetail() {
         }
     }
 
+    async function handleShare() {
+        const url = window.location.href
+        const text = `${listing.title} — ${listing.price.toLocaleString()} FC\nVoir sur Salu Market : ${url}`
+
+        if (navigator.share) {
+            // native share sheet on mobile
+            await navigator.share({
+                title: listing.title,
+                text: `${listing.title} — ${listing.price.toLocaleString()} FC`,
+                url: url
+            })
+        } else {
+            // fallback — copy to clipboard
+            await navigator.clipboard.writeText(text)
+            alert('Lien copié !')
+        }
+    }
     async function handleReport() {
         if (!user) {
             navigate('/login')
@@ -190,6 +207,10 @@ export default function ListingDetail() {
                 <h1 className="text-white font-semibold text-base line-clamp-1 flex-1">
                     {listing.title}
                 </h1>
+                {/* share button */}
+                <button onClick={handleShare} className="text-white opacity-80 text-sm">
+                    ↑□
+                </button>
                 {/* report button */}
                 <button
                     onClick={() => {
