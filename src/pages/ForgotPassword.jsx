@@ -21,7 +21,7 @@ export default function ForgotPassword() {
         setError('')
 
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: `${window.location.origin}/reset-password`
+            redirectTo: `https://www.salumarket.com/reset-password`
         })
 
         if (error) {
@@ -60,7 +60,7 @@ export default function ForgotPassword() {
                             onClick={() => navigate('/login')}
                             className="bg-primary text-white w-full rounded-xl py-3.5 font-semibold mt-4"
                         >
-                            Retour à la connexion
+                            Se Connecter
                         </button>
                     </div>
                 ) : (

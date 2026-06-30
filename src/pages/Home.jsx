@@ -44,46 +44,14 @@ async function fetchListings(pageNumber, setListings, setHasMore, setLoading, ca
 }
 
 const categoryIcons = [
-    { slug: 'all', label: 'Tout', icon: (active) => (
-        <svg className={`w-6 h-6 ${active ? 'text-white' : 'text-muted'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-        </svg>
-    )},
-    { slug: 'food', label: 'Aliment.', icon: (active) => (
-        <svg className={`w-6 h-6 ${active ? 'text-white' : 'text-muted'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-        </svg>
-    )},
-    { slug: 'furniture', label: 'Maison', icon: (active) => (
-        <svg className={`w-6 h-6 ${active ? 'text-white' : 'text-muted'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-        </svg>
-    )},
-    { slug: 'clothes', label: 'Mode', icon: (active) => (
-        <svg className={`w-6 h-6 ${active ? 'text-white' : 'text-muted'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M7 7l-4 4 4 4M17 7l4 4-4 4M14 3l-4 18" />
-        </svg>
-    )},
-    { slug: 'electronics', label: 'Electron.', icon: (active) => (
-        <svg className={`w-6 h-6 ${active ? 'text-white' : 'text-muted'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-    )},
-    { slug: 'phones', label: 'Téléphones', icon: (active) => (
-        <svg className={`w-6 h-6 ${active ? 'text-white' : 'text-muted'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-        </svg>
-    )},
-    { slug: 'vehicles', label: 'Véhicules', icon: (active) => (
-        <svg className={`w-6 h-6 ${active ? 'text-white' : 'text-muted'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10l2 1h8zM13 8h4l3 5v3h-7V8z" />
-        </svg>
-    )},
-    { slug: 'services', label: 'Services', icon: (active) => (
-        <svg className={`w-6 h-6 ${active ? 'text-white' : 'text-muted'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-    )},
+    { slug: 'phones', label: 'Téléphones'},
+    { slug: 'clothes', label: 'Habits'},
+    { slug: 'electronics', label: 'Electronique'},
+    { slug: 'food', label: 'Aliment.'},
+    { slug: 'furniture', label: 'Meubles'},
+    { slug: 'vehicles', label: 'Véhicules'},
+    { slug: 'services', label: 'Services'},
+    { slug: 'other', label: 'Autres'},
 ]
 
 export default function Home() {
@@ -330,11 +298,6 @@ export default function Home() {
                                 </button>
                             </div>
                         </div>
-
-                        {/* version at bottom */}
-                        <div className="px-6 py-4 border-t border-border">
-                            <p className="text-muted text-xs">Salu Market v1.0 · Mbuji-Mayi, RDC</p>
-                        </div>
                     </div>
                 </div>
             )}
@@ -370,18 +333,13 @@ export default function Home() {
                                 <button
                                     key={cat.slug}
                                     onClick={() => handleCategorySelect(cat.slug)}
-                                    className="flex flex-col items-center gap-1.5 flex-shrink-0"
+                                    className={`px-4 py-2 rounded-full border text-sm font-medium transition-all whitespace-nowrap ${
+                                        isActive 
+                                        ? 'bg-primary text-white border-primary shadow-md' 
+                                        : 'bg-light-bg text-muted border-gray-200 hover:border-primary hvover:text-primary'
+                                    }`}
                                 >
-                                    <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${
-                                        isActive ? 'bg-primary shadow-lg' : 'bg-white shadow-sm'
-                                    }`}>
-                                        {cat.icon(isActive)}
-                                    </div>
-                                    <span className={`text-xs font-medium ${
-                                        isActive ? 'text-primary' : 'text-muted'
-                                    }`}>
-                                        {cat.label}
-                                    </span>
+                                    {cat.label}
                                 </button>
                             )
                         })}
