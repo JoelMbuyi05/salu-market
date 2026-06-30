@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../store/authContext'
 import { trackListingView, trackWhatsAppContact } from '../lib/analytics'
+import BottomNav from '../components/BottomNav'
 
 export default function ListingDetail() {
     const { id } = useParams()
@@ -409,6 +410,7 @@ export default function ListingDetail() {
                     </div>
                 </div>
             )}
+            <BottomNav />
 
         </div>
     )

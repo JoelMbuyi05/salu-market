@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../store/authContext'
 import ListingCard from '../components/ListingCard'
+import BottomNav from '../components/BottomNav'
 
 export default function Profile() {
     const { t } = useTranslation()
@@ -154,7 +155,7 @@ export default function Profile() {
     }
 
     return (
-        <div className="min-h-screen bg-light-bg pb-24">
+            <div className="min-h-screen bg-light-bg pb-24">
 
             {/* Header */}
             <div className="bg-primary px-4 py-3 flex items-center justify-between sticky top-0 z-10">
@@ -378,6 +379,7 @@ export default function Profile() {
                 )}
 
             </div>
+            <BottomNav />
         </div>
     )
 }

@@ -13,6 +13,8 @@ import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import IOSInstallBanner from './components/IOSInstallerBanner'
 import SplashScreen from './components/SplashScreen'
+import Categories from './pages/Categories'
+import Messages from './pages/Messages'
 
 function ProtectedRoute({ children }) {
     const { user, loading } = useAuth()
@@ -59,6 +61,12 @@ export default function App() {
                     <Route path="/admin" element={
                         <ProtectedRoute>
                             <Admin />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/categories" element={<Categories />} />
+                    <Route path="/messages" element={
+                        <ProtectedRoute>
+                            <Messages />
                         </ProtectedRoute>
                     } />
                 </Routes>
