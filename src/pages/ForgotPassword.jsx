@@ -100,12 +100,6 @@ export default function ForgotPassword() {
                         >
                             {loading ? t('common.loading') : 'Envoyer le lien'}
                         </button>
-
-                        <p className="text-center text-sm text-muted">
-                            <Link to="/login" className="text-primary font-semibold">
-                                ← Retour à la connexion
-                            </Link>
-                        </p>
                     </>
                 )}
             </div>
