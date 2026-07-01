@@ -43,7 +43,7 @@ export default function Categories() {
                 {categories.map(cat => (
                     <button
                         key={cat.slug}
-                        onClick={() => navigate(`/?category=${cat.slug}`)}
+                        onClick={() => navigate(`/category/${cat.slug}`)}
                         className={`${cat.color} rounded-2xl p-6 flex flex-col items-center gap-3 active:scale-95 transition-transform`}
                     >
                         {cat.icon}

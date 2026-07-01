@@ -15,6 +15,7 @@ import IOSInstallBanner from './components/IOSInstallerBanner'
 import SplashScreen from './components/SplashScreen'
 import Categories from './pages/Categories'
 import Messages from './pages/Messages'
+import CategoryListings from './pages/CategoryListngs'
 
 function ProtectedRoute({ children }) {
     const { user, loading } = useAuth()
@@ -69,6 +70,7 @@ export default function App() {
                             <Messages />
                         </ProtectedRoute>
                     } />
+                    <Route path="/category/:slug" element={<CategoryListings />} />
                 </Routes>
             </BrowserRouter>
         </>
