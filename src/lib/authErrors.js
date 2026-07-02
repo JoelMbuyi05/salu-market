@@ -1,4 +1,8 @@
 export function translateAuthError(message, language = 'fr') {
+    // normalize language — fr-FR, fr-CD, fr-BE all become 'fr'
+    const lang = language?.startsWith('fr') ? 'fr' : 
+                 language?.startsWith('en') ? 'en' : 'fr'
+
     const errors = {
         fr: {
             'Invalid login credentials': 'Email ou mot de passe incorrect',
@@ -15,6 +19,11 @@ export function translateAuthError(message, language = 'fr') {
             'Failed to fetch': 'Connexion impossible. Vérifiez votre internet.',
             'NetworkError': 'Erreur réseau. Vérifiez votre connexion.',
             'fetch failed': 'Connexion impossible. Vérifiez votre internet.',
+            'over_email_send_rate_limit': 'Trop de tentatives. Réessayez plus tard.',
+            'Email link is invalid or has expired': 'Le lien a expiré. Demandez un nouveau.',
+            'Token has expired or is invalid': 'Session expirée. Reconnectez-vous.',
+            'User not allowed': 'Action non autorisée.',
+            'Signups not allowed for this instance': 'Les inscriptions sont désactivées.',
         },
         en: {
             'Invalid login credentials': 'Incorrect email or password',
@@ -29,7 +38,15 @@ export function translateAuthError(message, language = 'fr') {
             'Failed to fetch': 'Connection failed. Check your internet.',
             'NetworkError': 'Network error. Check your connection.',
             'fetch failed': 'Connection failed. Check your internet.',
+            'over_email_send_rate_limit': 'Too many attempts. Try again later.',
+            'Email link is invalid or has expired': 'Link expired. Request a new one.',
+            'Token has expired or is invalid': 'Session expired. Please log in again.',
+            'User not allowed': 'Action not allowed.',
+            'Signups not allowed for this instance': 'Signups are disabled.',
         }
     }
-    return errors[language]?.[message] || message
+
+    return errors[lang]?.[message] || 
+           errors[lang]?.[message?.split(':')[0]?.trim()] ||
+           (lang === 'fr' ? 'Une erreur est survenue. Réessayez.' : 'An error occurred. Please try again.')
 }

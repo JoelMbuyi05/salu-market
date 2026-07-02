@@ -22,7 +22,7 @@ export default function IOSInstallBanner() {
     return (
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-border px-4 py-3 z-50 flex items-start gap-3">
             <img
-                src="/icon-192.png"
+                src="public/favicon.png"
                 alt="Salu"
                 className="w-10 h-10 rounded-xl flex-shrink-0"
             />
