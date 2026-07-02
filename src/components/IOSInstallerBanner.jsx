@@ -5,11 +5,8 @@ export default function IOSInstallBanner() {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            // detect iOS Safari
             const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent)
-            // detect if already installed as PWA
             const isStandalone = window.navigator.standalone === true
-            // only show if iOS and not already installed
             if (isIOS && !isStandalone) {
                 setShow(true)
             }
@@ -20,18 +17,18 @@ export default function IOSInstallBanner() {
     if (!show) return null
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-border px-4 py-3 z-50 flex items-start gap-3">
-            <img
-                src="public/favicon.png"
-                alt="Salu"
-                className="w-10 h-10 rounded-xl flex-shrink-0"
-            />
+        <div className="fixed bottom-20 left-4 right-4 bg-white border border-border rounded-2xl px-4 py-3 z-50 flex items-center gap-3 shadow-xl">
+            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center flex-shrink-0">
+                <span className="text-white font-bold text-lg">S</span>
+            </div>
             <div className="flex-1">
                 <p className="text-near-black text-sm font-semibold">
-                    Installer Salu
+                    Installer Salu Market
                 </p>
                 <p className="text-muted text-xs mt-0.5">
-                    Appuyez sur <span className="font-semibold">□↑</span> puis "Sur l'écran d'accueil"
+                    Appuyez sur{' '}
+                    <span className="font-semibold">↑</span>
+                    {' '}puis "Sur l'écran d'accueil"
                 </p>
             </div>
             <button
