@@ -317,7 +317,7 @@ export default function ListingDetail() {
             <div className="h-44" />
 
             {/* Bottom buttons */}
-            <div className="fixed bottom-20 left-0 right-0 p-4 bg-white border-t border-border flex gap-3">
+            <div className="fixed bottom-24 left-0 right-0 p-4 bg-white border-t border-border flex gap-3">
                 {user?.id !== listing.user_id ? (
                     <>
                         <button
