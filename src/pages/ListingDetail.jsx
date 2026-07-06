@@ -208,20 +208,28 @@ export default function ListingDetail() {
                 <h1 className="text-white font-semibold text-base line-clamp-1 flex-1">
                     {listing.title}
                 </h1>
-                {/* share button */}
-                <button onClick={handleShare} className="text-white opacity-80 text-sm">
-                    ↑□
-                </button>
-                {/* report button */}
-                <button
-                    onClick={() => {
-                        if (!user) { navigate('/login'); return }
-                        setShowReportModal(true)
-                    }}
-                    className="text-white opacity-60 text-sm"
-                >
-                    ⚑
-                </button>
+                {/* share + report with space */}
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={handleShare}
+                        className="text-white opacity-80 p-1"
+                    >
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                        </svg>
+                    </button>
+                    <button
+                        onClick={() => {
+                            if (!user) { navigate('/login'); return }
+                            setShowReportModal(true)
+                        }}
+                        className="text-white opacity-60 p-1"
+                    >
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                        </svg>
+                    </button>
+                </div>
             </div>
 
             {/* Images */}
@@ -238,7 +246,6 @@ export default function ListingDetail() {
                         className="w-full h-full object-cover"
                         loading="eager"
                     />
-                    {/* counter top right */}
                     {images.length > 1 && (
                         <div className="absolute top-3 right-3 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded-full">
                             {currentImage + 1}/{images.length}
@@ -246,7 +253,6 @@ export default function ListingDetail() {
                     )}
                 </div>
 
-                {/* dots below image */}
                 {images.length > 1 && (
                     <div className="flex justify-center gap-2 py-2 bg-white">
                         {images.map((_, i) => (
@@ -307,12 +313,13 @@ export default function ListingDetail() {
                 </div>
             </div>
 
-            {/* Bottom buttons */}
-            <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-border flex gap-3">
+            {/* spacer for fixed buttons */}
+            <div className="h-44" />
 
+            {/* Bottom buttons */}
+            <div className="fixed bottom-20 left-0 right-0 p-4 bg-white border-t border-border flex gap-3">
                 {user?.id !== listing.user_id ? (
                     <>
-                        {/* save button */}
                         <button
                             onClick={toggleSave}
                             className={`flex items-center justify-center w-12 h-12 rounded-xl border-2 flex-shrink-0 ${
@@ -324,7 +331,6 @@ export default function ListingDetail() {
                             {isSaved ? '❤️' : '🤍'}
                         </button>
 
-                        {/* whatsapp button */}
                         <a
                             href={buildWhatsAppLink()}
                             target="_blank"
@@ -340,14 +346,12 @@ export default function ListingDetail() {
                         <span>Votre annonce</span>
                     </div>
                 )}
-
             </div>
 
             {/* Report Modal */}
             {showReportModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end">
                     <div className="bg-white w-full rounded-t-2xl p-6 flex flex-col gap-4">
-
                         {reportDone ? (
                             <div className="text-center py-6">
                                 <p className="text-2xl mb-2">✅</p>
@@ -410,8 +414,8 @@ export default function ListingDetail() {
                     </div>
                 </div>
             )}
-            <BottomNav />
 
+            <BottomNav />
         </div>
     )
 }
